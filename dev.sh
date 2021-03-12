@@ -1,0 +1,3 @@
+#!/bin/sh
+
+ENGAUGE_ENV=dev ENGAUGE_BASEPATH=data ENGAUGE_JWT=jwtsecret ENGAUGE_USER=user ENGAUGE_PASSWORD=password gin -i

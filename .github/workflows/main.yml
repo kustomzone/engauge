@@ -1,0 +1,16 @@
+name: engauge
+
+on:
+    push:
+        branches:
+            -master
+
+jobs:
+    lint:
+        runs-on: ubuntu-18.04
+        steps:
+            - uses: actions/checkout@v2
+            - uses: golangci/golangci-lint-action@master
+            with:
+                version: v1.27
+                github-token: ${{secrets.github_token}}
