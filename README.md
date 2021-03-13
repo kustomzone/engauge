@@ -48,13 +48,29 @@ The *only required fields* are `action` and `userID`. All other fields are optio
   - Monthly
 - Unit Metrics
 
-## deployment
+## deployment / build-from-source
 
-Deploying the engauge service is super simple. Use `make build` for a linux binary build. The binary will be placed in a created `bin/` directory inside the repository root directory.
+Deploying the engauge service is super simple. However, only a build-from-source option will be made available in the open-source version of Engauge. It's still really simple!
 
-The binary is completely self-contained. Just copy it to your favorite VPS instance, set your environment variables and start it up with a simple `./engauge` command.
+Use `make build` for a linux binary build. The binary (named `engauge`) will be placed in a created `bin/` directory inside the repository root directory.
+
+The binary is completely self-contained.
+
+Make sure a domain (or subdomain) e.g,. `example.com` or `sub.example.com` are pointed at the VPS instance that you will be deploying Engauge on.
+
+Then, just copy the binary to your favorite VPS instance, set your environment variables in the start command and start it up (likely using `nohup`, `screen`, or `systemd`).
+
+The start command look something like this:
+
+```sh
+ENGAUGE_HTTPS=true ENGAUGE_BASEPATH=engauge-data ENGAUGE_USER=admin ENGAUGE_PASSWORD=my-super-secret-admin-p@$$WorD! ENGAUGE_JWT=jwt-secret-key ./engauge
+```
 
 You can use `make windows` for windows binary builds.
+
+Engauge does output logs if you would like to capture those using a logging daemon (but this is completely optional).
+
+It also comes with a health-check endpoint `/health` that will return a simple `alive` string value if you want to monitor it externally.
 
 ### environment variables
 
@@ -156,3 +172,11 @@ where you will need to replace `example.com` with your Engauge instance domain.
 Many more features for Engauge are currently in progress and/or in planning.
 
 Stay tuned!
+
+## Open-source, not open-contribution
+
+We apologize for having to do this, but Engauge is **closed to code contributions** (at this time). This keeps the code base free of proprietary or licensed code.
+
+The Engauge team is too small to be accepting and maintaining third party patches for now. Small contributions typically require hours of time to properly test and validate.
+
+**However**, we are tremendously grateful to the community for any feature requests, ideas, discussions, bug reports, and general involvement!
