@@ -32,6 +32,7 @@ type Summary struct {
 	End              time.Time
 	Total            int64
 	ActionStats      *SimpleStats
+	OriginTypeStats  *SimpleStats
 	EntityTypeStats  *SimpleStats
 	UserTypeStats    *SimpleStats
 	DeviceTypeStats  *SimpleStats
@@ -56,6 +57,7 @@ type SummaryResponse struct {
 	End              time.Time          `json:"end"`
 	Total            int64              `json:"total"`
 	ActionStats      *SimpleStats       `json:"actionStats,omitempty"`
+	OriginTypeStats  *SimpleStats       `json:"originStats,omitempty"`
 	EntityTypeStats  *SimpleStats       `json:"entityTypeStats,omitempty"`
 	UserTypeStats    *SimpleStats       `json:"userTypeStats,omitempty"`
 	DeviceTypeStats  *SimpleStats       `json:"deviceTypeStats,omitempty"`
@@ -111,7 +113,15 @@ func NewSummary(spanType string, event *Event) (*Summary, error) {
 		return nil, errors.New(err, nil)
 	}
 
-	var entityTypeStats, userTypeStats, deviceTypeStats, sessionTypeStats *SimpleStats
+	var originTypeStats, entityTypeStats, userTypeStats, deviceTypeStats, sessionTypeStats *SimpleStats
+	if i.OriginType != nil {
+		ets, err := NewSimpleStats(*i.OriginType)
+		if err != nil {
+			return nil, errors.New(err, nil)
+		}
+		originTypeStats = ets
+	}
+
 	if i.EntityType != nil {
 		ets, err := NewSimpleStats(*i.EntityType)
 		if err != nil {
@@ -180,6 +190,7 @@ func NewSummary(spanType string, event *Event) (*Summary, error) {
 		SpanType:         spanType,
 		Total:            1,
 		ActionStats:      actionStats,
+		OriginTypeStats:  originTypeStats,
 		EntityTypeStats:  entityTypeStats,
 		UserTypeStats:    userTypeStats,
 		DeviceTypeStats:  deviceTypeStats,
@@ -208,6 +219,7 @@ func (s *Summary) Response() *SummaryResponse {
 		End:              s.End,
 		Total:            s.Total,
 		ActionStats:      s.ActionStats,
+		OriginTypeStats:  s.OriginTypeStats,
 		EntityTypeStats:  s.EntityTypeStats,
 		UserTypeStats:    s.UserTypeStats,
 		DeviceTypeStats:  s.DeviceTypeStats,
@@ -242,6 +254,21 @@ func (s *Summary) Apply(event *Event) error {
 	err := s.ActionStats.Update(*i.Action)
 	if err != nil {
 		return errors.New(err, nil)
+	}
+
+	if i.OriginType != nil {
+		if s.OriginTypeStats != nil {
+			err := s.OriginTypeStats.Update(*i.OriginType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+		} else {
+			ets, err := NewSimpleStats(*i.OriginType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+			s.OriginTypeStats = ets
+		}
 	}
 
 	if i.EntityType != nil {

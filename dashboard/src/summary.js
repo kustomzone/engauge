@@ -29,6 +29,13 @@ export const SummaryShow = props => (
                         <TextField label="Percentage" source="percentage" />
                     </Datagrid>
                 </ArrayField>
+                <ArrayField label="Origin Type Stats" source="originTypeStats.values">
+                    <Datagrid>
+                        <TextField label="Origin Type" source="value" />
+                        <TextField label="Total" source="count" />
+                        <TextField label="Percentage" source="percentage" />
+                    </Datagrid>
+                </ArrayField>
                 <ArrayField label="Entity Type Stats" source="entityTypeStats.values">
                     <Datagrid>
                         <TextField label="Entiity Type" source="value" />
@@ -66,6 +73,12 @@ export const SummaryShow = props => (
                         <TextField label="Session Type" source="sessionType" />
                         <NumberField label="Total Interactions" source="count" />
                         <NumberField label="Percentage of Interactions" source="percentage" />
+                        <NumberField label="Total Conversions" source="conversions" />
+                        <NumberField label="Conversion Rate" source="conversionRate" />
+                        <NumberField label="Bounced Sessions" source="bouncedSessions" />
+                        <NumberField label="Bounce Rate" source="bounceRate" />
+                        <NumberField label="Average Duration (minutes)" source="durationStats.mean" />
+                        <NumberField label="Average Interactions Per Session" source="interactionStats.mean" />
                     </Datagrid>
                 </ArrayField>
             </Tab>
