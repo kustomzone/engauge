@@ -10,10 +10,10 @@ import (
 // If there are no conversion event types then UnitMetrics will be zeroed.
 // If there are no amount property keys then revenue results will be zeroed.
 type UnitMetrics struct {
-	TotalConversions      int64    `json:"totalConversions"`
-	TotalRevenue          float64  `json:"totalRevenue"`
-	AverageRevenuePerUser *float64 `json:"averageRevenuePerUser,omitempty"`
-	AmountStats           *Stats   `json:"amountStats,omitempty"`
+	TotalConversions      int64        `json:"totalConversions"`
+	TotalRevenue          float64      `json:"totalRevenue"`
+	AverageRevenuePerUser *float64     `json:"averageRevenuePerUser,omitempty"`
+	AmountStats           *SimpleStats `json:"amountStats,omitempty"`
 }
 
 // ConversionStats --
@@ -66,7 +66,7 @@ func NewUnitMetrics(i *Interaction) (*UnitMetrics, error) {
 		}
 	}
 
-	amountStats, err := NewStats(amount, i.CreatedAt)
+	amountStats, err := NewSimpleStats(amount)
 	if err != nil {
 		return nil, errors.New(err, map[string]interface{}{
 			"amount":    amount,
@@ -135,7 +135,7 @@ func (u *UnitMetrics) SimpleUpdate(i *Interaction) {
 			amount, ok := a.(float64)
 			if ok {
 				u.TotalRevenue += amount
-				u.AmountStats.Update(amount, i.CreatedAt)
+				u.AmountStats.Update(amount)
 			}
 		}
 	}
@@ -145,7 +145,7 @@ func (u *UnitMetrics) SimpleUpdate(i *Interaction) {
 func (u *UnitMetrics) SessionUpdate(s *UserSession) error {
 	u.TotalConversions += s.Conversions
 	u.TotalRevenue += s.Value
-	return u.AmountStats.Update(s.Value, &s.UpdatedAt)
+	return u.AmountStats.Update(s.Value)
 }
 
 // Update --
@@ -162,13 +162,13 @@ func (u *UnitMetrics) Update(i *Interaction, users int64) error {
 					arpu := u.TotalRevenue / float64(users)
 					u.AverageRevenuePerUser = &arpu
 					if u.AmountStats == nil {
-						amountStats, err := NewStats(amount, i.CreatedAt)
+						amountStats, err := NewSimpleStats(amount)
 						if err != nil {
 							return errors.New(err, nil)
 						}
 						u.AmountStats = amountStats
 					} else {
-						u.AmountStats.Update(amount, i.CreatedAt)
+						u.AmountStats.Update(amount)
 					}
 				}
 			}
