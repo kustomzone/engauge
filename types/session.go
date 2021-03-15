@@ -295,12 +295,12 @@ func (s *UserSession) Update(i *Interaction) {
 }
 
 // Duration will return the duration of the entire session
-func (s *UserSession) Duration(expired bool) time.Duration {
+func (s *UserSession) Duration(expired bool) float64 {
 	if expired {
-		return s.UpdatedAt.Sub(s.CreatedAt)
+		return s.UpdatedAt.Sub(s.CreatedAt).Minutes()
 	}
 
-	return time.Now().UTC().Sub(s.CreatedAt)
+	return time.Now().UTC().Sub(s.CreatedAt).Minutes()
 }
 
 // Encode will gop encode a session object into a
