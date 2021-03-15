@@ -1,6 +1,5 @@
 import * as React from "react";
-import { Admin, Resource } from 'react-admin';
-import { Route } from 'react-router-dom';
+import { Admin, Resource, Title } from 'react-admin';
 import dataProvider from './dataProvider';
 import FunctionsIcon from '@material-ui/icons/Functions';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -16,9 +15,7 @@ import { PropertyList, PropertyCreate, PropertyShow } from './property';
 import { OriginList, OriginShow } from './origin';
 import { EntityList, EntityShow } from './entity';
 import { SummaryList, SummaryShow } from "./summary";
-import { SettingsList, SettingsEdit} from "./settings";
-// import SettingsEdit from "./settings/index";
-// import AppLayout from "./layout";
+import { SettingsList, SettingsEdit } from "./settings";
 
 const theme = createMuiTheme({
      palette: {
@@ -27,16 +24,7 @@ const theme = createMuiTheme({
 });
 
 const App = () => (
-     <Admin authProvider={authProvider} disableTelemetry theme={theme} dataProvider={dataProvider}
-          // customRoutes={[
-          //      <Route
-          //           key="admin-settings"
-          //           path="/admin-settings"
-          //           component={SettingsEdit.edit}
-          //      />
-          // ]}
-          // appLayout={AppLayout}
-     >
+     <Admin authProvider={authProvider} disableTelemetry theme={theme} dataProvider={dataProvider}>
           <Resource name="summaries" list={SummaryList} show={SummaryShow} icon={FunctionsIcon} />
           <Resource name="endpoint" list={EndpointList} create={EndpointCreate} show={EndpointShow} icon={SettingsInputAntennaIcon} />
           <Resource name="origin" list={OriginList} show={OriginShow} icon={WebAssetIcon} />

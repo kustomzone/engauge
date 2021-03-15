@@ -2,7 +2,7 @@ import * as React from "react";
 import { List, Datagrid, TextField, EditButton, Edit, Create, SimpleForm, useNotify, useRefresh, useRedirect, TextInput, SelectInput, ArrayInput, SimpleFormIterator, ReferenceInput, SimpleShowLayout, Show, ArrayField, ReferenceField, ShowButton, BooleanField, BooleanInput, NumberInput } from 'react-admin';
 
 export const SettingsList = props => (
-    <List {...props}>
+    <List title="Settings" {...props}>
         <Datagrid>
             <EditButton />
         </Datagrid>
@@ -10,7 +10,7 @@ export const SettingsList = props => (
 );
 
 export const SettingsEdit = props => (
-    <Edit {...props}>
+    <Edit title="Settings" {...props}>
         <SimpleForm>
             <BooleanInput label="Interactions Storage" source="interactions" />
             <BooleanInput label="Hourly Stats" source="statsToggles.hourly.on" />
