@@ -68,6 +68,7 @@ func (u *SessionStats) Update(sess *UserSession) {
 		u.BouncedSessions++
 	}
 	u.BounceRate = float64(u.BouncedSessions) / float64(u.Count)
+	u.ConversionRate = float64(u.Count) / float64(u.Conversions)
 }
 
 // SimpleUpdate --
@@ -78,16 +79,29 @@ func (u *SessionStats) SimpleUpdate(sess *UserSession) {
 		u.BouncedSessions++
 	}
 	u.BounceRate = float64(u.BouncedSessions) / float64(u.Count)
+	u.ConversionRate = float64(u.Count) / float64(u.Conversions)
 }
 
 // SimpleUpdate --
 func (s *SessionStatsList) SimpleUpdate(sess *UserSession) error {
 	// update stats if exists
+	var exists bool
+	var total int64
 	for _, stats := range s.List {
 		if stats.UserType == sess.UserType && stats.SessionType == sess.Type && sess.DeviceType == sess.DeviceType {
 			stats.SimpleUpdate(sess)
-			return nil
+			exists = true
 		}
+		total += stats.Count
+	}
+
+	// update percentages
+	for _, stats := range s.List {
+		stats.Percentage = float64(total) / float64(stats.Count)
+	}
+
+	if exists {
+		return nil
 	}
 
 	// else: create new stats
@@ -103,11 +117,23 @@ func (s *SessionStatsList) SimpleUpdate(sess *UserSession) error {
 // Update --
 func (u *SessionStatsList) Update(sess *UserSession) error {
 	// update stats if exists
+	var exists bool
+	var total int64
 	for _, stats := range u.List {
 		if stats.UserType == sess.UserType && stats.SessionType == sess.Type && stats.DeviceType == sess.DeviceType {
 			stats.Update(sess)
-			return nil
+			exists = true
 		}
+		total += stats.Count
+	}
+
+	// update percentages
+	for _, stats := range u.List {
+		stats.Percentage = float64(total) / float64(stats.Count)
+	}
+
+	if exists {
+		return nil
 	}
 
 	// else: create new stats
