@@ -48,19 +48,23 @@ The *only required fields* are `action` and `userID`. All other fields are optio
   - Monthly
 - Unit Metrics
 
-## deployment / build-from-source
+## build from source
 
-Deploying the engauge service is super simple. However, only a build-from-source option will be made available in the open-source version of Engauge. It's still really simple!
+Only a build-from-source option will be made available in the open-source version of Engauge. It's still really simple!
 
 Use `make build` for a linux binary build. The binary (named `engauge`) will be placed in a created `bin/` directory inside the repository root directory.
 
 The binary is completely self-contained.
 
+## self-host
+
+Deploying the engauge service is super simple.
+
 Make sure a domain (or subdomain) e.g,. `example.com` or `sub.example.com` are pointed at the VPS instance that you will be deploying Engauge on.
 
-Then, just copy the binary to your favorite VPS instance, set your environment variables in the start command and start it up (likely using `nohup`, `screen`, or `systemd`).
+Then, just copy the binary to your favorite VPS instance, set your environment variable values in the start command and start it up (likely using `nohup`, `screen`, or `systemd`).
 
-The start command look something like this:
+The start command should look something like this:
 
 ```sh
 ENGAUGE_HTTPS=true ENGAUGE_BASEPATH=engauge-data ENGAUGE_USER=admin ENGAUGE_PASSWORD=my-super-secret-admin-p@$$WorD! ENGAUGE_JWT=jwt-secret-key ./engauge
