@@ -12,7 +12,6 @@ func init() {
 	// extras
 	gob.Register(NewUUID())
 	gob.Register(sam.SliceFloat64{})
-	gob.Register(make(Counts, 0))
 	gob.Register(make(temporal.YearSeasons))
 	gob.Register(time.Duration(0))
 
