@@ -1,5 +1,7 @@
 # Engauge
 
+![alt text](./.github/screenshot.png)
+
 ## Concept
 
 Track user interactions in your apps and products in real-time and see the corresponding stats in a simple dashboard.
@@ -9,7 +11,7 @@ Allows for custom instrumentation of applications/products by utilizing a simple
 <!-- Interactions format -->
 ```go
 type Interaction struct {
-	// how
+    // how
 	Action *string // required
 
 	// what
@@ -67,7 +69,7 @@ Then, just copy the binary to your favorite VPS instance, set your environment v
 The start command should look something like this:
 
 ```sh
-ENGAUGE_HTTPS=true ENGAUGE_BASEPATH=engauge-data ENGAUGE_USER=admin ENGAUGE_PASSWORD=my-super-secret-admin-p@$$WorD! ENGAUGE_JWT=jwt-secret-key ./engauge
+ENGAUGE_HTTPS=true ENGAUGE_BASEPATH=engauge-data ENGAUGE_USER=admin ENGAUGE_PASSWORD=my-super-secret-admin-p@$$WorD! ENGAUGE_JWT=jwt-secret-key ENGAUGE_APIKEY=my-secret-api-key ./engauge
 ```
 
 You can use `make windows` for windows binary builds.
