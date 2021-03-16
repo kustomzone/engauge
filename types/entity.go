@@ -34,7 +34,7 @@ type EntityResponse struct {
 	WeeklyStats    *EntityStats `json:"weeklyStats,omitempty"`
 	MonthlyStats   *EntityStats `json:"monthlyStats,omitempty"`
 	QuarterlyStats *EntityStats `json:"quarterlyStats,omitempty"`
-	YearlyStats    *EntityStats `json:"entityStats,omitempty"`
+	YearlyStats    *EntityStats `json:"yearlyStats,omitempty"`
 }
 
 // NewEntities --
