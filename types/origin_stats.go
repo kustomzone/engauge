@@ -283,11 +283,6 @@ func (o *OriginStatsList) Update(updateFunc func(object interface{}) error) erro
 	return nil
 }
 
-// VisitUpdate --
-func (o *OriginProfile) VisitUpdate(s *UserSession) {
-	o.VisitStats.Update(s)
-}
-
 // Update --
 func (o *OriginProfile) Update(event *Event) error {
 	o.Total++
