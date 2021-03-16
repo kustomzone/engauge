@@ -75,7 +75,7 @@ func EntityGet(c echo.Context) error {
 		EntityType: &entity.EntityType,
 		EntityID:   &entity.EntityID,
 	}
-	for _, interval := range types.Spans {
+	for _, interval := range types.Intervals {
 		switch interval {
 		case types.Hourly:
 			if db.GlobalSettings.StatsToggles.Hourly {
@@ -132,6 +132,34 @@ func EntityGet(c echo.Context) error {
 				}
 
 				response.MonthlyStats = stats
+			}
+		case types.Quarterly:
+			if db.GlobalSettings.StatsToggles.Quarterly {
+				stats, err := db.EntityStatsCache.Get(id, interval)
+				if err != nil {
+					c.Logger().Error(err)
+					return c.NoContent(http.StatusInternalServerError)
+				}
+
+				if time.Now().UTC().After(stats.End) {
+					stats = &types.EntityStats{}
+				}
+
+				response.QuarterlyStats = stats
+			}
+		case types.Yearly:
+			if db.GlobalSettings.StatsToggles.Yearly {
+				stats, err := db.EntityStatsCache.Get(id, interval)
+				if err != nil {
+					c.Logger().Error(err)
+					return c.NoContent(http.StatusInternalServerError)
+				}
+
+				if time.Now().UTC().After(stats.End) {
+					stats = &types.EntityStats{}
+				}
+
+				response.YearlyStats = stats
 			}
 		case types.AllTime:
 			stats, err := db.EntityStatsCache.Get(id, interval)

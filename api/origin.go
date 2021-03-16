@@ -70,7 +70,7 @@ func OriginGet(c echo.Context) error {
 		OriginType: origin.OriginType,
 		OriginID:   origin.OriginID,
 	}
-	for _, interval := range types.Spans {
+	for _, interval := range types.Intervals {
 		switch interval {
 		case types.Hourly:
 			if db.GlobalSettings.StatsToggles.Hourly {
@@ -127,6 +127,34 @@ func OriginGet(c echo.Context) error {
 				}
 
 				response.MonthlyStats = stats
+			}
+		case types.Quarterly:
+			if db.GlobalSettings.StatsToggles.Quarterly {
+				stats, err := db.OriginsStatsCache.Get(id, interval)
+				if err != nil {
+					c.Logger().Error(err)
+					return c.NoContent(http.StatusInternalServerError)
+				}
+
+				if time.Now().UTC().After(stats.End) {
+					stats = &types.OriginStats{}
+				}
+
+				response.QuarterlyStats = stats
+			}
+		case types.Yearly:
+			if db.GlobalSettings.StatsToggles.Yearly {
+				stats, err := db.OriginsStatsCache.Get(id, interval)
+				if err != nil {
+					c.Logger().Error(err)
+					return c.NoContent(http.StatusInternalServerError)
+				}
+
+				if time.Now().UTC().After(stats.End) {
+					stats = &types.OriginStats{}
+				}
+
+				response.YearlyStats = stats
 			}
 		case types.AllTime:
 			stats, err := db.OriginsStatsCache.Get(id, interval)

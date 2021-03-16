@@ -78,7 +78,7 @@ func EndpointGet(c echo.Context) error {
 		OriginID:   endpoint.OriginID,
 		Profile:    endpoint.Profile,
 	}
-	for _, interval := range types.Spans {
+	for _, interval := range types.Intervals {
 		switch interval {
 		case types.Hourly:
 			if db.GlobalSettings.StatsToggles.Hourly {
@@ -136,6 +136,36 @@ func EndpointGet(c echo.Context) error {
 
 				response.MonthlyStats = stats
 			}
+
+		case types.Quarterly:
+			if db.GlobalSettings.StatsToggles.Quarterly {
+				stats, err := db.EndpointsStatsCache.Get(id, interval)
+				if err != nil {
+					c.Logger().Error(err)
+					return c.NoContent(http.StatusInternalServerError)
+				}
+
+				if time.Now().UTC().After(stats.End) {
+					stats = &types.EndpointStats{}
+				}
+
+				response.QuarterlyStats = stats
+			}
+		case types.Yearly:
+			if db.GlobalSettings.StatsToggles.Yearly {
+				stats, err := db.EndpointsStatsCache.Get(id, interval)
+				if err != nil {
+					c.Logger().Error(err)
+					return c.NoContent(http.StatusInternalServerError)
+				}
+
+				if time.Now().UTC().After(stats.End) {
+					stats = &types.EndpointStats{}
+				}
+
+				response.YearlyStats = stats
+			}
+
 		}
 	}
 

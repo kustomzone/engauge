@@ -105,6 +105,28 @@ export const PropertyShow = props => (
                     </Datagrid>
                 </ArrayField>
             </Tab>
+            <Tab label="Quarterly Stats">
+                <TextField label="Average Value" source="quarterlyStats.stats.mean" />
+                <TextField label="Most Occurring Value" source="quarterlyStats.stats.mode" />
+                <ArrayField label="Value Statistics" source="quarterlyStats.stats.values">
+                    <Datagrid>
+                        <TextField label="Value" source="value" />
+                        <NumberField label="Total" source="count" />
+                        <NumberField label="Percentage" source="percentage" />
+                    </Datagrid>
+                </ArrayField>
+            </Tab>
+            <Tab label="Yearly Stats">
+                <TextField label="Average Value" source="yearlyStats.stats.mean" />
+                <TextField label="Most Occurring Value" source="yearlyStats.stats.mode" />
+                <ArrayField label="Value Statistics" source="yearlyStats.stats.values">
+                    <Datagrid>
+                        <TextField label="Value" source="value" />
+                        <NumberField label="Total" source="count" />
+                        <NumberField label="Percentage" source="percentage" />
+                    </Datagrid>
+                </ArrayField>
+            </Tab>
         </TabbedShowLayout>
     </Show>
 );

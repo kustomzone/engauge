@@ -244,6 +244,96 @@ export const EntityShow = (props) => (
                     </Datagrid>
                 </ArrayField>
             </Tab>
+            <Tab label="Quarterly Stats">
+            <ArrayField label="Actions Statistics" source="quarterlyStats.profile.actionStats.values">
+                    <Datagrid>
+                        <TextField label="Action" source="value" />
+                        <NumberField label="Total Interactions" source="count" />
+                        <NumberField label="Percentage of Interactions" source="percentage" />
+                    </Datagrid>
+                </ArrayField>
+                <ArrayField label="Entity Type Statistics" source="quarterlyStats.profile.entityTypeStats.values">
+                    <Datagrid>
+                        <TextField label="Entity Type" source="value" />
+                        <NumberField label="Total Interactions" source="count" />
+                        <NumberField label="Percentage of Interactions" source="percentage" />
+                    </Datagrid>
+                </ArrayField>
+                <ArrayField label="User Type Statistics" source="quarterlyStats.profile.userTypeStats.values">
+                    <Datagrid>
+                        <TextField label="User Type" source="value" />
+                        <NumberField label="Total Interactions" source="count" />
+                        <NumberField label="Percentage of Interactions" source="percentage" />
+                    </Datagrid>
+                </ArrayField>
+                <ArrayField label="Session Type Statistics" source="quarterlyStats.profile.sessionTypeStats.values">
+                    <Datagrid>
+                        <TextField label="Session Type" source="value" />
+                        <NumberField label="Total Interactions" source="count" />
+                        <NumberField label="Percentage of Interactions" source="percentage" />
+                    </Datagrid>
+                </ArrayField>
+                <ArrayField label="Device Type Statistics" source="quarterlyStats.profile.deviceTypeStats.values">
+                    <Datagrid>
+                        <TextField label="Device Type" source="value" />
+                        <NumberField label="Total Interactions" source="count" />
+                        <NumberField label="Percentage of Interactions" source="percentage" />
+                    </Datagrid>
+                </ArrayField>
+                <ArrayField label="Property Statistics" source="quarterlyStats.profile.propertyStats.List">
+                    <Datagrid>
+                        <TextField label="Property" source="name" />
+                        <TextField label="Total Interactions" source="stats.total" />
+                        <TextField label="Average Value" source="stats.mean" />
+                        <TextField label="Most Occuring Value" source="stats.mode" />
+                    </Datagrid>
+                </ArrayField>
+            </Tab>
+            <Tab label="Yearly Stats">
+            <ArrayField label="Actions Statistics" source="yearlyStats.profile.actionStats.values">
+                    <Datagrid>
+                        <TextField label="Action" source="value" />
+                        <NumberField label="Total Interactions" source="count" />
+                        <NumberField label="Percentage of Interactions" source="percentage" />
+                    </Datagrid>
+                </ArrayField>
+                <ArrayField label="Entity Type Statistics" source="yearlyStats.profile.entityTypeStats.values">
+                    <Datagrid>
+                        <TextField label="Entity Type" source="value" />
+                        <NumberField label="Total Interactions" source="count" />
+                        <NumberField label="Percentage of Interactions" source="percentage" />
+                    </Datagrid>
+                </ArrayField>
+                <ArrayField label="User Type Statistics" source="yearlyStats.profile.userTypeStats.values">
+                    <Datagrid>
+                        <TextField label="User Type" source="value" />
+                        <NumberField label="Total Interactions" source="count" />
+                        <NumberField label="Percentage of Interactions" source="percentage" />
+                    </Datagrid>
+                </ArrayField>
+                <ArrayField label="Session Type Statistics" source="yearlyStats.profile.sessionTypeStats.values">
+                    <Datagrid>
+                        <TextField label="Session Type" source="value" />
+                        <NumberField label="Total Interactions" source="count" />
+                        <NumberField label="Percentage of Interactions" source="percentage" />
+                    </Datagrid>
+                </ArrayField>
+                <ArrayField label="Device Type Statistics" source="yearlyStats.profile.deviceTypeStats.values">
+                    <Datagrid>
+                        <TextField label="Device Type" source="value" />
+                        <NumberField label="Total Interactions" source="count" />
+                        <NumberField label="Percentage of Interactions" source="percentage" />
+                    </Datagrid>
+                </ArrayField>
+                <ArrayField label="Property Statistics" source="yearlyStats.profile.propertyStats.List">
+                    <Datagrid>
+                        <TextField label="Property" source="name" />
+                        <TextField label="Total Interactions" source="stats.total" />
+                        <TextField label="Average Value" source="stats.mean" />
+                        <TextField label="Most Occuring Value" source="stats.mode" />
+                    </Datagrid>
+                </ArrayField>
+            </Tab>
         </TabbedShowLayout>
     </Show>
 );

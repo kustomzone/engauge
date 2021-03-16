@@ -62,6 +62,12 @@ func NewOriginStats(event *Event, spanType string) (*OriginStats, error) {
 	case Monthly:
 		start = temporal.MonthStart(*i.CreatedAt)
 		end = temporal.MonthFinish(*i.CreatedAt)
+	case Quarterly:
+		start = temporal.QuarterStart(*i.CreatedAt)
+		end = temporal.QuarterFinish(*i.CreatedAt)
+	case Yearly:
+		start = temporal.YearStart(*i.CreatedAt)
+		end = temporal.YearFinish(*i.CreatedAt)
 	case AllTime:
 		start = time.Time{}
 		end = time.Unix(1<<63-1, 0)
@@ -202,7 +208,7 @@ func (o *OriginStatsList) Apply(event *Event) error {
 	o.Lock()
 	defer o.Unlock()
 
-	for _, spantype := range Spans {
+	for _, spantype := range Intervals {
 		hasher := fnv.New32a()
 		_, err := hasher.Write([]byte(fmt.Sprintf("%s-%s", event.Origin.String(), spantype)))
 		if err != nil {

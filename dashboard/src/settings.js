@@ -17,6 +17,8 @@ export const SettingsEdit = props => (
             <BooleanInput label="Daily Stats" source="statsToggles.daily.on" />
             <BooleanInput label="Weekly Stats" source="statsToggles.weekly.on" />
             <BooleanInput label="Monthly Stats" source="statsToggles.monthly.on" />
+            <BooleanInput label="Quarterly Stats" source="statsToggles.quarterly.on" />
+            <BooleanInput label="Yearly Stats" source="statsToggles.yearly.on" />
         </SimpleForm>
     </Edit>
 );

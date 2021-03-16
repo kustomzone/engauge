@@ -146,7 +146,7 @@ func processInteractions(client db.Client, interactions []*types.Interaction) {
 		}
 
 		// summaries
-		for _, spanType := range types.Spans {
+		for _, spanType := range types.Intervals {
 			var toggle bool
 			switch spanType {
 			case types.Hourly:
@@ -157,6 +157,10 @@ func processInteractions(client db.Client, interactions []*types.Interaction) {
 				toggle = db.GlobalSettings.StatsToggles.Weekly
 			case types.Monthly:
 				toggle = db.GlobalSettings.StatsToggles.Monthly
+			case types.Quarterly:
+				toggle = db.GlobalSettings.StatsToggles.Quarterly
+			case types.Yearly:
+				toggle = db.GlobalSettings.StatsToggles.Yearly
 			}
 
 			if !toggle {

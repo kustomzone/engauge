@@ -8,23 +8,6 @@ import (
 	"github.com/humilityai/temporal"
 )
 
-var (
-	/* span type */
-
-	// AllTime is a span type
-	AllTime = "allTime"
-	// Hourly is a span type
-	Hourly = "hourly"
-	// Daily is a span type
-	Daily = "daily"
-	// Weekly is a span type
-	Weekly = "weekly"
-	// Monthly is a span type
-	Monthly = "monthly"
-	// Spans is the full list of span types for summaries
-	Spans = []string{AllTime, Hourly, Daily, Weekly, Monthly}
-)
-
 // Summary --
 type Summary struct {
 	SpanType         string
@@ -67,8 +50,7 @@ type SummaryResponse struct {
 	UnitMetrics      *UnitMetrics       `json:"unitMetrics,omitempty"`
 }
 
-// NewSummary will generate a new summary for a specific spantype (daily, weekly, monthly)
-// and for a specific interaction
+// NewSummary will generate a new summary for an interval type
 func NewSummary(spanType string, event *Event) (*Summary, error) {
 	i := event.Interaction
 	sess := event.Session
@@ -88,6 +70,12 @@ func NewSummary(spanType string, event *Event) (*Summary, error) {
 	case Monthly:
 		start = temporal.MonthStart(*i.CreatedAt)
 		end = temporal.MonthFinish(*i.CreatedAt)
+	case Quarterly:
+		start = temporal.QuarterStart(*i.CreatedAt)
+		end = temporal.QuarterFinish(*i.CreatedAt)
+	case Yearly:
+		start = temporal.YearStart(*i.CreatedAt)
+		end = temporal.YearFinish(*i.CreatedAt)
 	case AllTime:
 		// all-time summary is a simplified summary object
 		start = time.Time{}

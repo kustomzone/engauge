@@ -25,14 +25,16 @@ type Entities struct {
 
 // EntityResponse --
 type EntityResponse struct {
-	ID           *UUID        `json:"id"`
-	EntityType   *string      `json:"entityType,omitempty"`
-	EntityID     *string      `json:"entityID,omitempty"`
-	AlltimeStats *EntityStats `json:"allTimeStats,omitempty"`
-	HourlyStats  *EntityStats `json:"hourlyStats,omitempty"`
-	DailyStats   *EntityStats `json:"dailyStats,omitempty"`
-	WeeklyStats  *EntityStats `json:"weeklyStats,omitempty"`
-	MonthlyStats *EntityStats `json:"monthlyStats,omitempty"`
+	ID             *UUID        `json:"id"`
+	EntityType     *string      `json:"entityType,omitempty"`
+	EntityID       *string      `json:"entityID,omitempty"`
+	AlltimeStats   *EntityStats `json:"allTimeStats,omitempty"`
+	HourlyStats    *EntityStats `json:"hourlyStats,omitempty"`
+	DailyStats     *EntityStats `json:"dailyStats,omitempty"`
+	WeeklyStats    *EntityStats `json:"weeklyStats,omitempty"`
+	MonthlyStats   *EntityStats `json:"monthlyStats,omitempty"`
+	QuarterlyStats *EntityStats `json:"quarterlyStats,omitempty"`
+	YearlyStats    *EntityStats `json:"entityStats,omitempty"`
 }
 
 // NewEntities --

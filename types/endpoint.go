@@ -67,11 +67,13 @@ type EndpointResponse struct {
 	OriginType *string `json:"originType,omitempty"`
 	OriginID   *string `json:"originID,omitempty"`
 
-	Profile      *EndpointProfile `json:"profile"`
-	HourlyStats  *EndpointStats   `json:"hourlyStats"`
-	DailyStats   *EndpointStats   `json:"dailyStats"`
-	WeeklyStats  *EndpointStats   `json:"weeklyStats"`
-	MonthlyStats *EndpointStats   `json:"monthlyStats"`
+	Profile        *EndpointProfile `json:"profile"`
+	HourlyStats    *EndpointStats   `json:"hourlyStats"`
+	DailyStats     *EndpointStats   `json:"dailyStats"`
+	WeeklyStats    *EndpointStats   `json:"weeklyStats"`
+	MonthlyStats   *EndpointStats   `json:"monthlyStats"`
+	QuarterlyStats *EndpointStats   `json:"quarterlyStats"`
+	YearlyStats    *EndpointStats   `json:"yearlyStats"`
 }
 
 // Endpoints is a List of endpoint objects
@@ -144,6 +146,12 @@ func NewEndpointStats(event *Event, spanType string) (*EndpointStats, error) {
 	case Monthly:
 		start = temporal.MonthStart(*i.CreatedAt)
 		end = temporal.MonthFinish(*i.CreatedAt)
+	case Quarterly:
+		start = temporal.QuarterStart(*i.CreatedAt)
+		end = temporal.QuarterFinish(*i.CreatedAt)
+	case Yearly:
+		start = temporal.YearStart(*i.CreatedAt)
+		end = temporal.YearFinish(*i.CreatedAt)
 	}
 
 	return &EndpointStats{
@@ -215,7 +223,7 @@ func (e *EndpointStatsList) Apply(event *Event) error {
 	e.Lock()
 	defer e.Unlock()
 
-	for _, spantype := range Spans {
+	for _, spantype := range Intervals {
 		hasher := fnv.New32a()
 		_, err := hasher.Write([]byte(fmt.Sprintf("%s-%s", event.Endpoint.String(), spantype)))
 		if err != nil {

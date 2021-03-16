@@ -47,6 +47,14 @@ func SummaryGet(c echo.Context) error {
 		if !db.GlobalSettings.StatsToggles.Monthly {
 			return c.NoContent(http.StatusBadRequest)
 		}
+	case types.Quarterly:
+		if !db.GlobalSettings.StatsToggles.Quarterly {
+			return c.NoContent(http.StatusBadRequest)
+		}
+	case types.Yearly:
+		if !db.GlobalSettings.StatsToggles.Yearly {
+			return c.NoContent(http.StatusBadRequest)
+		}
 	default:
 		return c.NoContent(http.StatusBadRequest)
 	}

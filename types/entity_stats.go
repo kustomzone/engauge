@@ -102,7 +102,7 @@ func NewEntityProfile(i *Interaction) (*EntityProfile, error) {
 }
 
 // NewEntityStats --
-func NewEntityStats(event *Event, spanType string) (*EntityStats, error) {
+func NewEntityStats(event *Event, interval string) (*EntityStats, error) {
 	i := event.Interaction
 	profile, err := NewEntityProfile(i)
 	if err != nil {
@@ -110,7 +110,7 @@ func NewEntityStats(event *Event, spanType string) (*EntityStats, error) {
 	}
 
 	var start, end time.Time
-	switch spanType {
+	switch interval {
 	case Hourly:
 		start = temporal.HourStart(*i.CreatedAt)
 		end = temporal.HourFinish(*i.CreatedAt)
@@ -123,6 +123,12 @@ func NewEntityStats(event *Event, spanType string) (*EntityStats, error) {
 	case Monthly:
 		start = temporal.MonthStart(*i.CreatedAt)
 		end = temporal.MonthFinish(*i.CreatedAt)
+	case Quarterly:
+		start = temporal.QuarterStart(*i.CreatedAt)
+		end = temporal.QuarterFinish(*i.CreatedAt)
+	case Yearly:
+		start = temporal.YearStart(*i.CreatedAt)
+		end = temporal.YearFinish(*i.CreatedAt)
 	case AllTime:
 		start = time.Time{}
 		end = time.Unix(1<<63-1, 0)
@@ -130,7 +136,7 @@ func NewEntityStats(event *Event, spanType string) (*EntityStats, error) {
 
 	return &EntityStats{
 		ID:       &UUID{UUID: event.Entity},
-		SpanType: spanType,
+		SpanType: interval,
 		Start:    start,
 		End:      end,
 		Profile:  profile,
@@ -243,7 +249,7 @@ func (e *EntityStatsList) Apply(event *Event) error {
 	e.Lock()
 	defer e.Unlock()
 
-	for _, spantype := range Spans {
+	for _, spantype := range Intervals {
 		hasher := fnv.New32a()
 		_, err := hasher.Write([]byte(fmt.Sprintf("%s-%s", event.Entity.String(), spantype)))
 		if err != nil {

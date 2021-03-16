@@ -14,6 +14,28 @@ const (
 	OnOffToggle = "onoff"
 	// HistoryToggle is a toggle type
 	HistoryToggle = "history"
+
+	/* interval types */
+
+	// AllTime is an interval type
+	AllTime = "allTime"
+	// Hourly is an interval type
+	Hourly = "hourly"
+	// Daily is an interval type
+	Daily = "daily"
+	// Weekly is an interval type
+	Weekly = "weekly"
+	// Monthly is an interval type
+	Monthly = "monthly"
+	// Quarterly is an interval type
+	Quarterly = "quarterly"
+	// Yearly is an interval type
+	Yearly = "yearly"
+)
+
+var (
+	// Intervals is the full list of interval types for summaries
+	Intervals = []string{AllTime, Hourly, Daily, Weekly, Monthly, Quarterly, Yearly}
 )
 
 // Settings is the settings for the entire system
@@ -29,10 +51,12 @@ type Settings struct {
 
 // StatsToggles is the set of all summary toggles
 type StatsToggles struct {
-	Hourly  bool `json:"hourly"`
-	Daily   bool `json:"daily"`
-	Weekly  bool `json:"weekly"`
-	Monthly bool `json:"monthly"`
+	Hourly    bool `json:"hourly"`
+	Daily     bool `json:"daily"`
+	Weekly    bool `json:"weekly"`
+	Monthly   bool `json:"monthly"`
+	Quarterly bool `json:"quarterly"`
+	Yearly    bool `json:"yearly"`
 }
 
 // NewSettings --
@@ -46,10 +70,12 @@ func NewSettings() *Settings {
 // NewStatsToggles will return a pointer to a new `StatsToggles` object.
 func NewStatsToggles() *StatsToggles {
 	return &StatsToggles{
-		Hourly:  true,
-		Daily:   true,
-		Weekly:  true,
-		Monthly: true,
+		Hourly:    true,
+		Daily:     true,
+		Weekly:    true,
+		Monthly:   true,
+		Quarterly: true,
+		Yearly:    true,
 	}
 }
 
@@ -64,6 +90,10 @@ func (s *StatsToggles) Update(spanType, toggleType string) {
 		s.Weekly = toggleBool(s.Weekly)
 	case Monthly:
 		s.Monthly = toggleBool(s.Monthly)
+	case Quarterly:
+		s.Quarterly = toggleBool(s.Quarterly)
+	case Yearly:
+		s.Yearly = toggleBool(s.Yearly)
 	}
 }
 

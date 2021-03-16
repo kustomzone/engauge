@@ -35,13 +35,15 @@ type Property struct {
 
 // PropertyResponse --
 type PropertyResponse struct {
-	ID           string         `json:"id"`
-	Type         string         `json:"type"`
-	Stats        *Stats         `json:"stats"`
-	HourlyStats  *PropertyStats `json:"hourlyStats,omitempty"`
-	DailyStats   *PropertyStats `json:"dailyStats,omitempty"`
-	WeeklyStats  *PropertyStats `json:"weeklyStats,omitempty"`
-	MonthlyStats *PropertyStats `json:"monthlyStats,omitempty"`
+	ID             string         `json:"id"`
+	Type           string         `json:"type"`
+	Stats          *Stats         `json:"stats"`
+	HourlyStats    *PropertyStats `json:"hourlyStats,omitempty"`
+	DailyStats     *PropertyStats `json:"dailyStats,omitempty"`
+	WeeklyStats    *PropertyStats `json:"weeklyStats,omitempty"`
+	MonthlyStats   *PropertyStats `json:"monthlyStats,omitempty"`
+	QuarterlyStats *PropertyStats `json:"quarterlyStats,omitempty"`
+	YearlyStats    *PropertyStats `json:"yearlyStats,omitempty"`
 }
 
 // PropertyListView --
@@ -138,6 +140,12 @@ func NewPropertyStats(name string, spanType string, value interface{}, timestamp
 	case Monthly:
 		start = temporal.MonthStart(*timestamp)
 		end = temporal.MonthFinish(*timestamp)
+	case Quarterly:
+		start = temporal.QuarterStart(*timestamp)
+		end = temporal.QuarterFinish(*timestamp)
+	case Yearly:
+		start = temporal.YearStart(*timestamp)
+		end = temporal.YearFinish(*timestamp)
 	}
 
 	return &PropertyStats{
@@ -325,7 +333,7 @@ func (p *PropertyStatsList) Apply(event *Event) error {
 
 	if i.Properties != nil {
 		for name, value := range i.Properties {
-			for _, spantype := range Spans {
+			for _, spantype := range Intervals {
 				hasher := fnv.New32a()
 				_, err := hasher.Write([]byte(fmt.Sprintf("%s-%s", name, spantype)))
 				if err != nil {
