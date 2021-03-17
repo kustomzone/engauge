@@ -8,6 +8,7 @@ require (
 	github.com/JKhawaja/errors v0.0.3
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gofrs/uuid v4.0.0+incompatible
+	github.com/humilityai/math v0.0.0-20200803033757-480d44b783d6
 	github.com/humilityai/sam v0.0.0-20200926070415-163d9ceca42a
 	github.com/humilityai/temporal v0.0.1
 	github.com/kelseyhightower/envconfig v1.4.0

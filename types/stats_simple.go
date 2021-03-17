@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/JKhawaja/errors"
+	hMath "github.com/humilityai/math"
 	"github.com/humilityai/sam"
 )
 
@@ -153,7 +154,7 @@ func (s *SimpleStats) UpdateValue(value interface{}) error {
 	// set percentages
 	sum := s.sum()
 	for _, stats := range s.Values {
-		stats.Percentage = float64(stats.Count) / float64(sum)
+		stats.Percentage = hMath.IsNum(float64(stats.Count) / float64(sum))
 	}
 
 	return nil
@@ -191,7 +192,7 @@ func (s *SimpleStats) meanIndex() int {
 		sum += total
 		mean += float64(i) * total
 	}
-	return int(math.Round(mean / sum))
+	return int(hMath.IsNum(math.Round(mean / sum)))
 }
 
 func (s *SimpleStats) max() (value interface{}) {
@@ -241,7 +242,7 @@ func (s *SimpleStats) Update(value interface{}) error {
 		sum := s.sum()
 		for i := 0; i < len(s.Values); i++ {
 			val := s.get(i).Count
-			prob := float64(val) / float64(sum)
+			prob := hMath.IsNum(float64(val) / float64(sum))
 			variance := float64(val) * (1 - prob)
 			s.Variance[i] = variance
 			s.StdDev[i] = math.Sqrt(variance)
@@ -261,10 +262,10 @@ func (s *SimpleStats) Update(value interface{}) error {
 		}
 
 		oldMean := s.Mean.(float64)
-		s.Mean = (float64(s.Total)*oldMean + v) / (float64(s.Total) + 1)
+		s.Mean = hMath.IsNum((float64(s.Total)*oldMean + v) / (float64(s.Total) + 1))
 
 		s.Total++
-		s.Variance[0] = ((float64(s.Total)-2)*s.Variance[0] + (v-s.Mean.(float64))*(v-oldMean)) / (float64(s.Total) - 1)
+		s.Variance[0] = hMath.IsNum(((float64(s.Total)-2)*s.Variance[0] + (v-s.Mean.(float64))*(v-oldMean)) / (float64(s.Total) - 1))
 		s.StdDev[0] = math.Sqrt(s.Variance[0])
 
 		s.UpdateValue(value)
