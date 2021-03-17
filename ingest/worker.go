@@ -90,24 +90,18 @@ func processInteractions(client db.Client, interactions []*types.Interaction) {
 			continue
 		}
 		interaction.SessionID = &session.ID
-		endpointID := db.EndpointsCache.ID(interaction.Endpoint())
 		event := &types.Event{
 			Interaction: interaction,
 			Session:     session,
 			Origin:      db.OriginsCache.ID(interaction.Origin()),
 			Entity:      db.EntitiesCache.ID(interaction.Entity()),
-			Endpoint:    endpointID.UUID,
+			Endpoint:    db.EndpointsCache.ID(interaction.Endpoint()),
 		}
 
-		// data
+		// endpoints
 		err = db.EndpointsCache.Apply(event)
 		if err != nil {
 			fmt.Println(errors.NewTrace(err).Error())
-		}
-
-		if endpointID.UUID == types.UUIDNil.UUID {
-			newEndpointID := db.EndpointsCache.ID(interaction.Endpoint())
-			event.Endpoint = newEndpointID.UUID
 		}
 
 		err = db.EndpointsStatsCache.Apply(event)
@@ -115,26 +109,21 @@ func processInteractions(client db.Client, interactions []*types.Interaction) {
 			fmt.Println(errors.NewTrace(err).Error())
 		}
 
+		// origins
 		db.OriginsCache.Apply(event)
-		if event.Origin == types.UUIDNil.UUID {
-			event.Origin = db.OriginsCache.ID(interaction.Origin())
-		}
-
 		err = db.OriginsStatsCache.Apply(event)
 		if err != nil {
 			fmt.Println(errors.NewTrace(err).Error())
 		}
 
+		// entities
 		db.EntitiesCache.Apply(event)
-		if event.Entity == types.UUIDNil.UUID {
-			event.Entity = db.OriginsCache.ID(interaction.Origin())
-		}
-
 		err = db.EntityStatsCache.Apply(event)
 		if err != nil {
 			fmt.Println(errors.NewTrace(err).Error())
 		}
 
+		// properties
 		err = db.PropertiesCache.Apply(event)
 		if err != nil {
 			fmt.Println(errors.NewTrace(err).Error())
@@ -146,9 +135,9 @@ func processInteractions(client db.Client, interactions []*types.Interaction) {
 		}
 
 		// summaries
-		for _, spanType := range types.Intervals {
+		for _, interval := range types.Intervals {
 			var toggle bool
-			switch spanType {
+			switch interval {
 			case types.Hourly:
 				toggle = db.GlobalSettings.StatsToggles.Hourly
 			case types.Daily:
@@ -167,16 +156,16 @@ func processInteractions(client db.Client, interactions []*types.Interaction) {
 				continue
 			}
 
-			s, ok := db.SummaryCache.Load(spanType)
+			s, ok := db.SummaryCache.Load(interval)
 
 			// create new summary if dne
 			if !ok {
-				newSummary, err := types.NewSummary(spanType, event)
+				newSummary, err := types.NewSummary(interval, event)
 				if err != nil {
 					fmt.Println(errors.NewTrace(err).Error())
 					continue
 				}
-				db.SummaryCache.Store(spanType, newSummary)
+				db.SummaryCache.Store(interval, newSummary)
 				continue
 			}
 
@@ -184,13 +173,13 @@ func processInteractions(client db.Client, interactions []*types.Interaction) {
 			summary := s.(*types.Summary)
 			if summary.Expired(interaction) {
 				// new summary
-				newSummary, err := types.NewSummary(spanType, event)
+				newSummary, err := types.NewSummary(interval, event)
 				if err != nil {
 					fmt.Println(errors.NewTrace(err).Error())
 					continue
 				}
 
-				db.SummaryCache.Store(spanType, newSummary)
+				db.SummaryCache.Store(interval, newSummary)
 			} else {
 				err = summary.Apply(event)
 				if err != nil {
@@ -247,7 +236,7 @@ func updateDB(client db.Client) {
 	}
 
 	err = db.EndpointsStatsCache.Update(func(object interface{}) error {
-		endpointStats, ok := object.(*types.EndpointStats)
+		endpointStats, ok := object.(*types.IntervalStats)
 		if !ok {
 			return errors.New(types.ErrAssertion, nil)
 		}
@@ -257,7 +246,7 @@ func updateDB(client db.Client) {
 			Type:     db.Update,
 			Where: db.WhereMap{
 				"item.id":       endpointStats.ID,
-				"item.spanType": endpointStats.SpanType,
+				"item.interval": endpointStats.Interval,
 			},
 			Item:   endpointStats,
 			Upsert: true,
@@ -300,7 +289,7 @@ func updateDB(client db.Client) {
 	}
 
 	err = db.OriginsStatsCache.Update(func(object interface{}) error {
-		originStats, ok := object.(*types.OriginStats)
+		originStats, ok := object.(*types.IntervalStats)
 		if !ok {
 			return errors.New(types.ErrAssertion, nil)
 		}
@@ -310,7 +299,7 @@ func updateDB(client db.Client) {
 			Type:     db.Update,
 			Where: db.WhereMap{
 				"item.id":       originStats.ID,
-				"item.spanType": originStats.SpanType,
+				"item.interval": originStats.Interval,
 			},
 			Item:   originStats,
 			Upsert: true,
@@ -353,7 +342,7 @@ func updateDB(client db.Client) {
 	}
 
 	err = db.EntityStatsCache.Update(func(object interface{}) error {
-		entityStats, ok := object.(*types.EntityStats)
+		entityStats, ok := object.(*types.IntervalStats)
 		if !ok {
 			return errors.New(types.ErrAssertion, nil)
 		}
@@ -363,7 +352,7 @@ func updateDB(client db.Client) {
 			Type:     db.Update,
 			Where: db.WhereMap{
 				"item.id":       entityStats.ID,
-				"item.spanType": entityStats.SpanType,
+				"item.interval": entityStats.Interval,
 			},
 			Item:   entityStats,
 			Upsert: true,

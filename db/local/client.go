@@ -279,18 +279,18 @@ func (c *Client) filenameFromWhere(resource string, where db.Where) string {
 	}
 
 	switch resource {
-	case db.EndpointStats, db.OriginStats:
-		st, ok := wm["item.spanType"]
+	case db.EndpointStats, db.OriginStats, db.EntityStats:
+		st, ok := wm["item.interval"]
 		if !ok {
 			return ""
 		}
 
-		spanType, ok := st.(string)
+		interval, ok := st.(string)
 		if !ok {
 			return ""
 		}
 
-		return fmt.Sprintf("%s/%s/%s-%s", c.basepath, resource, id, spanType)
+		return fmt.Sprintf("%s/%s/%s-%s", c.basepath, resource, id, interval)
 	}
 
 	return fmt.Sprintf("%s/%s/%s", c.basepath, resource, id)
@@ -318,21 +318,15 @@ func (c *Client) filename(resource string, item interface{}) string {
 	case db.Endpoints:
 		i := item.(*types.Endpoint)
 		filename = fmt.Sprintf("%s/%s/%s", c.basepath, resource, i.ID.String())
-	case db.EndpointStats:
-		i := item.(*types.EndpointStats)
-		filename = fmt.Sprintf("%s/%s/%s-%s", c.basepath, resource, i.ID.String(), i.SpanType)
 	case db.Origins:
 		i := item.(*types.Origin)
 		filename = fmt.Sprintf("%s/%s/%s", c.basepath, resource, i.ID.String())
-	case db.OriginStats:
-		i := item.(*types.OriginStats)
-		filename = fmt.Sprintf("%s/%s/%s-%s", c.basepath, resource, i.ID.String(), i.SpanType)
 	case db.Entities:
 		i := item.(*types.Entity)
 		filename = fmt.Sprintf("%s/%s/%s", c.basepath, resource, i.ID.String())
-	case db.EntityStats:
-		i := item.(*types.EntityStats)
-		filename = fmt.Sprintf("%s/%s/%s-%s", c.basepath, resource, i.ID.String(), i.SpanType)
+	case db.OriginStats, db.EntityStats, db.EndpointStats:
+		i := item.(*types.IntervalStats)
+		filename = fmt.Sprintf("%s/%s/%s-%s", c.basepath, resource, i.ID.String(), i.Interval)
 	case db.Properties:
 		i := item.(*types.Property)
 		filename = fmt.Sprintf("%s/%s/%s", c.basepath, resource, i.Name)

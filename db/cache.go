@@ -16,15 +16,15 @@ var (
 	// EndpointsCache --
 	EndpointsCache *types.Endpoints
 	// EndpointsStatsCache --
-	EndpointsStatsCache *types.EndpointStatsList
+	EndpointsStatsCache *types.IntervalStatsList
 	// OriginsCache --
 	OriginsCache *types.Origins
 	// OriginsStatsCache --
-	OriginsStatsCache *types.OriginStatsList
+	OriginsStatsCache *types.IntervalStatsList
 	// EntitiesCache --
 	EntitiesCache *types.Entities
 	// EntityStatsCache --
-	EntityStatsCache *types.EntityStatsList
+	EntityStatsCache *types.IntervalStatsList
 	// PropertiesCache --
 	PropertiesCache *types.Properties
 	// PropertyStatsCache --

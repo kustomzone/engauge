@@ -3,7 +3,6 @@ package api
 import (
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/EngaugeAI/engauge/db"
 	"github.com/EngaugeAI/engauge/types"
@@ -70,102 +69,13 @@ func OriginGet(c echo.Context) error {
 		OriginType: origin.OriginType,
 		OriginID:   origin.OriginID,
 	}
-	for _, interval := range types.Intervals {
-		switch interval {
-		case types.Hourly:
-			if db.GlobalSettings.StatsToggles.Hourly {
-				stats, err := db.OriginsStatsCache.Get(id, interval)
-				if err != nil {
-					c.Logger().Error(err)
-					return c.NoContent(http.StatusInternalServerError)
-				}
 
-				if time.Now().UTC().After(stats.End) {
-					stats = &types.OriginStats{}
-				}
-
-				response.HourlyStats = stats
-			}
-		case types.Daily:
-			if db.GlobalSettings.StatsToggles.Daily {
-				stats, err := db.OriginsStatsCache.Get(id, interval)
-				if err != nil {
-					c.Logger().Error(err)
-					return c.NoContent(http.StatusInternalServerError)
-				}
-
-				if time.Now().UTC().After(stats.End) {
-					stats = &types.OriginStats{}
-				}
-
-				response.DailyStats = stats
-			}
-		case types.Weekly:
-			if db.GlobalSettings.StatsToggles.Weekly {
-				stats, err := db.OriginsStatsCache.Get(id, interval)
-				if err != nil {
-					c.Logger().Error(err)
-					return c.NoContent(http.StatusInternalServerError)
-				}
-
-				if time.Now().UTC().After(stats.End) {
-					stats = &types.OriginStats{}
-				}
-
-				response.WeeklyStats = stats
-			}
-		case types.Monthly:
-			if db.GlobalSettings.StatsToggles.Monthly {
-				stats, err := db.OriginsStatsCache.Get(id, interval)
-				if err != nil {
-					c.Logger().Error(err)
-					return c.NoContent(http.StatusInternalServerError)
-				}
-
-				if time.Now().UTC().After(stats.End) {
-					stats = &types.OriginStats{}
-				}
-
-				response.MonthlyStats = stats
-			}
-		case types.Quarterly:
-			if db.GlobalSettings.StatsToggles.Quarterly {
-				stats, err := db.OriginsStatsCache.Get(id, interval)
-				if err != nil {
-					c.Logger().Error(err)
-					return c.NoContent(http.StatusInternalServerError)
-				}
-
-				if time.Now().UTC().After(stats.End) {
-					stats = &types.OriginStats{}
-				}
-
-				response.QuarterlyStats = stats
-			}
-		case types.Yearly:
-			if db.GlobalSettings.StatsToggles.Yearly {
-				stats, err := db.OriginsStatsCache.Get(id, interval)
-				if err != nil {
-					c.Logger().Error(err)
-					return c.NoContent(http.StatusInternalServerError)
-				}
-
-				if time.Now().UTC().After(stats.End) {
-					stats = &types.OriginStats{}
-				}
-
-				response.YearlyStats = stats
-			}
-		case types.AllTime:
-			stats, err := db.OriginsStatsCache.Get(id, interval)
-			if err != nil {
-				c.Logger().Error(err)
-				return c.NoContent(http.StatusInternalServerError)
-			}
-
-			response.AllTimeStats = stats
-		}
+	stats, err := db.OriginsStatsCache.AllIntervalStats(origin.ID.String())
+	if err != nil {
+		c.Logger().Error(err)
+		return echo.ErrInternalServerError
 	}
+	response.Stats = stats
 
 	return c.JSON(http.StatusOK, response)
 }

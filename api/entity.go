@@ -3,7 +3,6 @@ package api
 import (
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/EngaugeAI/engauge/db"
 	"github.com/EngaugeAI/engauge/types"
@@ -74,102 +73,15 @@ func EntityGet(c echo.Context) error {
 		ID:         entity.ID,
 		EntityType: &entity.EntityType,
 		EntityID:   &entity.EntityID,
+		Stats:      &types.AllIntervalStats{},
 	}
-	for _, interval := range types.Intervals {
-		switch interval {
-		case types.Hourly:
-			if db.GlobalSettings.StatsToggles.Hourly {
-				stats, err := db.EntityStatsCache.Get(id, interval)
-				if err != nil {
-					c.Logger().Error(err)
-					return c.NoContent(http.StatusInternalServerError)
-				}
 
-				if time.Now().UTC().After(stats.End) {
-					stats = &types.EntityStats{}
-				}
-
-				response.HourlyStats = stats
-			}
-		case types.Daily:
-			if db.GlobalSettings.StatsToggles.Daily {
-				stats, err := db.EntityStatsCache.Get(id, interval)
-				if err != nil {
-					c.Logger().Error(err)
-					return c.NoContent(http.StatusInternalServerError)
-				}
-
-				if time.Now().UTC().After(stats.End) {
-					stats = &types.EntityStats{}
-				}
-
-				response.DailyStats = stats
-			}
-		case types.Weekly:
-			if db.GlobalSettings.StatsToggles.Weekly {
-				stats, err := db.EntityStatsCache.Get(id, interval)
-				if err != nil {
-					c.Logger().Error(err)
-					return c.NoContent(http.StatusInternalServerError)
-				}
-
-				if time.Now().UTC().After(stats.End) {
-					stats = &types.EntityStats{}
-				}
-
-				response.WeeklyStats = stats
-			}
-		case types.Monthly:
-			if db.GlobalSettings.StatsToggles.Monthly {
-				stats, err := db.EntityStatsCache.Get(id, interval)
-				if err != nil {
-					c.Logger().Error(err)
-					return c.NoContent(http.StatusInternalServerError)
-				}
-
-				if time.Now().UTC().After(stats.End) {
-					stats = &types.EntityStats{}
-				}
-
-				response.MonthlyStats = stats
-			}
-		case types.Quarterly:
-			if db.GlobalSettings.StatsToggles.Quarterly {
-				stats, err := db.EntityStatsCache.Get(id, interval)
-				if err != nil {
-					c.Logger().Error(err)
-					return c.NoContent(http.StatusInternalServerError)
-				}
-
-				if time.Now().UTC().After(stats.End) {
-					stats = &types.EntityStats{}
-				}
-
-				response.QuarterlyStats = stats
-			}
-		case types.Yearly:
-			if db.GlobalSettings.StatsToggles.Yearly {
-				stats, err := db.EntityStatsCache.Get(id, interval)
-				if err != nil {
-					c.Logger().Error(err)
-					return c.NoContent(http.StatusInternalServerError)
-				}
-
-				if time.Now().UTC().After(stats.End) {
-					stats = &types.EntityStats{}
-				}
-
-				response.YearlyStats = stats
-			}
-		case types.AllTime:
-			stats, err := db.EntityStatsCache.Get(id, interval)
-			if err != nil {
-				c.Logger().Error(err)
-				return c.NoContent(http.StatusInternalServerError)
-			}
-			response.AlltimeStats = stats
-		}
+	stats, err := db.EntityStatsCache.AllIntervalStats(entity.ID.String())
+	if err != nil {
+		c.Logger().Error(err)
+		return echo.ErrInternalServerError
 	}
+	response.Stats = stats
 
 	return c.JSON(http.StatusOK, response)
 }

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/EngaugeAI/engauge/db"
 	"github.com/EngaugeAI/engauge/types"
@@ -76,98 +75,14 @@ func EndpointGet(c echo.Context) error {
 		EntityID:   endpoint.EntityID,
 		OriginType: endpoint.OriginType,
 		OriginID:   endpoint.OriginID,
-		Profile:    endpoint.Profile,
 	}
-	for _, interval := range types.Intervals {
-		switch interval {
-		case types.Hourly:
-			if db.GlobalSettings.StatsToggles.Hourly {
-				stats, err := db.EndpointsStatsCache.Get(id, interval)
-				if err != nil {
-					c.Logger().Error(err)
-					return c.NoContent(http.StatusInternalServerError)
-				}
 
-				if time.Now().UTC().After(stats.End) {
-					stats = &types.EndpointStats{}
-				}
-
-				response.HourlyStats = stats
-			}
-		case types.Daily:
-			if db.GlobalSettings.StatsToggles.Daily {
-				stats, err := db.EndpointsStatsCache.Get(id, interval)
-				if err != nil {
-					c.Logger().Error(err)
-					return c.NoContent(http.StatusInternalServerError)
-				}
-
-				if time.Now().UTC().After(stats.End) {
-					stats = &types.EndpointStats{}
-				}
-
-				response.DailyStats = stats
-			}
-		case types.Weekly:
-			if db.GlobalSettings.StatsToggles.Weekly {
-				stats, err := db.EndpointsStatsCache.Get(id, interval)
-				if err != nil {
-					c.Logger().Error(err)
-					return c.NoContent(http.StatusInternalServerError)
-				}
-
-				if time.Now().UTC().After(stats.End) {
-					stats = &types.EndpointStats{}
-				}
-
-				response.WeeklyStats = stats
-			}
-		case types.Monthly:
-			if db.GlobalSettings.StatsToggles.Monthly {
-				stats, err := db.EndpointsStatsCache.Get(id, interval)
-				if err != nil {
-					c.Logger().Error(err)
-					return c.NoContent(http.StatusInternalServerError)
-				}
-
-				if time.Now().UTC().After(stats.End) {
-					stats = &types.EndpointStats{}
-				}
-
-				response.MonthlyStats = stats
-			}
-
-		case types.Quarterly:
-			if db.GlobalSettings.StatsToggles.Quarterly {
-				stats, err := db.EndpointsStatsCache.Get(id, interval)
-				if err != nil {
-					c.Logger().Error(err)
-					return c.NoContent(http.StatusInternalServerError)
-				}
-
-				if time.Now().UTC().After(stats.End) {
-					stats = &types.EndpointStats{}
-				}
-
-				response.QuarterlyStats = stats
-			}
-		case types.Yearly:
-			if db.GlobalSettings.StatsToggles.Yearly {
-				stats, err := db.EndpointsStatsCache.Get(id, interval)
-				if err != nil {
-					c.Logger().Error(err)
-					return c.NoContent(http.StatusInternalServerError)
-				}
-
-				if time.Now().UTC().After(stats.End) {
-					stats = &types.EndpointStats{}
-				}
-
-				response.YearlyStats = stats
-			}
-
-		}
+	stats, err := db.EndpointsStatsCache.AllIntervalStats(endpoint.ID.String())
+	if err != nil {
+		c.Logger().Error(err)
+		return echo.ErrInternalServerError
 	}
+	response.Stats = stats
 
 	return c.JSON(http.StatusOK, response)
 }
@@ -180,7 +95,7 @@ func EndpointPost(c echo.Context) error {
 		return c.NoContent(http.StatusBadRequest)
 	}
 
-	if existingID := db.EndpointsCache.ID(&endpoint); existingID != types.UUIDNil {
+	if existingID := db.EndpointsCache.ID(&endpoint); existingID != types.UUIDNil.UUID {
 		return c.NoContent(http.StatusBadRequest)
 	}
 

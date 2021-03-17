@@ -60,29 +60,6 @@ func (c *Client) decodeList(resource string, filenames []string) (interface{}, e
 			list = append(list, item.(*types.Endpoint))
 		}
 		return list, nil
-	case db.EndpointStats:
-		list := make([]*types.EndpointStats, 0)
-		for _, filename := range filenames {
-			fullName := fmt.Sprintf("%s/%s/%s", c.basepath, resource, filename)
-			data, err := ioutil.ReadFile(fullName)
-			if err != nil {
-				return nil, errors.New(err, map[string]interface{}{
-					"resource": resource,
-					"file":     filename,
-				})
-			}
-
-			item, err := decodeFile(resource, data)
-			if err != nil {
-				return nil, errors.New(err, map[string]interface{}{
-					"resource": resource,
-					"file":     filename,
-				})
-			}
-
-			list = append(list, item.(*types.EndpointStats))
-		}
-		return list, nil
 	case db.Origins:
 		list := make([]*types.Origin, 0)
 		for _, filename := range filenames {
@@ -106,8 +83,8 @@ func (c *Client) decodeList(resource string, filenames []string) (interface{}, e
 			list = append(list, item.(*types.Origin))
 		}
 		return list, nil
-	case db.OriginStats:
-		list := make([]*types.OriginStats, 0)
+	case db.OriginStats, db.EndpointStats, db.EntityStats:
+		list := make([]*types.IntervalStats, 0)
 		for _, filename := range filenames {
 			fullName := fmt.Sprintf("%s/%s/%s", c.basepath, resource, filename)
 			data, err := ioutil.ReadFile(fullName)
@@ -126,7 +103,7 @@ func (c *Client) decodeList(resource string, filenames []string) (interface{}, e
 				})
 			}
 
-			list = append(list, item.(*types.OriginStats))
+			list = append(list, item.(*types.IntervalStats))
 		}
 		return list, nil
 	case db.Entities:
@@ -150,29 +127,6 @@ func (c *Client) decodeList(resource string, filenames []string) (interface{}, e
 			}
 
 			list = append(list, item.(*types.Entity))
-		}
-		return list, nil
-	case db.EntityStats:
-		list := make([]*types.EntityStats, 0)
-		for _, filename := range filenames {
-			fullName := fmt.Sprintf("%s/%s/%s", c.basepath, resource, filename)
-			data, err := ioutil.ReadFile(fullName)
-			if err != nil {
-				return nil, errors.New(err, map[string]interface{}{
-					"resource": resource,
-					"file":     filename,
-				})
-			}
-
-			item, err := decodeFile(resource, data)
-			if err != nil {
-				return nil, errors.New(err, map[string]interface{}{
-					"resource": resource,
-					"file":     filename,
-				})
-			}
-
-			list = append(list, item.(*types.EntityStats))
 		}
 		return list, nil
 	case db.Properties:
@@ -256,16 +210,12 @@ func decodeFile(resource string, b []byte) (interface{}, error) {
 		item = &types.Interaction{}
 	case db.Endpoints:
 		item = &types.Endpoint{}
-	case db.EndpointStats:
-		item = &types.EndpointStats{}
 	case db.Origins:
 		item = &types.Origin{}
-	case db.OriginStats:
-		item = &types.OriginStats{}
 	case db.Entities:
 		item = &types.Entity{}
-	case db.EntityStats:
-		item = &types.EntityStats{}
+	case db.EndpointStats, db.OriginStats, db.EntityStats:
+		item = &types.IntervalStats{}
 	case db.Properties:
 		item = &types.Property{}
 	case db.PropertyStats:

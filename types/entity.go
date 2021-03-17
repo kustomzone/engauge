@@ -25,16 +25,20 @@ type Entities struct {
 
 // EntityResponse --
 type EntityResponse struct {
-	ID             *UUID        `json:"id"`
-	EntityType     *string      `json:"entityType,omitempty"`
-	EntityID       *string      `json:"entityID,omitempty"`
-	AlltimeStats   *EntityStats `json:"allTimeStats,omitempty"`
-	HourlyStats    *EntityStats `json:"hourlyStats,omitempty"`
-	DailyStats     *EntityStats `json:"dailyStats,omitempty"`
-	WeeklyStats    *EntityStats `json:"weeklyStats,omitempty"`
-	MonthlyStats   *EntityStats `json:"monthlyStats,omitempty"`
-	QuarterlyStats *EntityStats `json:"quarterlyStats,omitempty"`
-	YearlyStats    *EntityStats `json:"yearlyStats,omitempty"`
+	ID         *UUID             `json:"id"`
+	EntityType *string           `json:"entityType,omitempty"`
+	EntityID   *string           `json:"entityID,omitempty"`
+	Stats      *AllIntervalStats `json:"stats,omitempty"`
+}
+
+// EntityProfile --
+type EntityProfile struct {
+	Total            int64                 `json:"total"`
+	ActionStats      *SimpleStats          `json:"actionStats,omitempty"`
+	UserTypeStats    *SimpleStats          `json:"userTypeStats,omitempty"`
+	DeviceTypeStats  *SimpleStats          `json:"deviceTypeStats,omitempty"`
+	SessionTypeStats *SimpleStats          `json:"sessionTypeStats,omitempty"`
+	PropertyStats    *NamedSimpleStatsList `json:"propertyStats,omitempty"`
 }
 
 // NewEntities --
@@ -52,6 +56,60 @@ func NewEntity(i *Interaction) *Entity {
 	entity := i.Entity()
 	entity.ID = NewUUID()
 	return entity
+}
+
+// NewEntityProfile --
+func NewEntityProfile(i *Interaction) (*EntityProfile, error) {
+	var userTypeStats, deviceTypeStats, sessionTypeStats *SimpleStats
+
+	actionStats, err := NewSimpleStats(*i.Action)
+	if err != nil {
+		return nil, errors.New(err, nil)
+	}
+
+	if i.UserType != nil {
+		uts, err := NewSimpleStats(*i.UserType)
+		if err != nil {
+			return nil, errors.New(err, nil)
+		}
+		userTypeStats = uts
+	}
+
+	if i.DeviceType != nil {
+		dts, err := NewSimpleStats(*i.DeviceType)
+		if err != nil {
+			return nil, errors.New(err, nil)
+		}
+		deviceTypeStats = dts
+	}
+
+	if i.SessionType != nil {
+		sts, err := NewSimpleStats(*i.SessionType)
+		if err != nil {
+			return nil, errors.New(err, nil)
+		}
+		sessionTypeStats = sts
+	}
+
+	// properties
+	propertyStats := NewNamedSimpleStatsList()
+	if i.Properties != nil {
+		for key, value := range i.Properties {
+			err := propertyStats.Update(key, value)
+			if err != nil {
+				return nil, errors.New(err, nil)
+			}
+		}
+	}
+
+	return &EntityProfile{
+		Total:            1,
+		UserTypeStats:    userTypeStats,
+		ActionStats:      actionStats,
+		DeviceTypeStats:  deviceTypeStats,
+		SessionTypeStats: sessionTypeStats,
+		PropertyStats:    propertyStats,
+	}, nil
 }
 
 // Apply --
@@ -128,4 +186,72 @@ func (e *Entity) String() string {
 	s = append(s, e.EntityID)
 
 	return strings.Join(s, "-")
+}
+
+// Update --
+func (e *EntityProfile) Update(event *Event) error {
+	i := event.Interaction
+
+	e.Total++
+
+	err := e.ActionStats.Update(*i.Action)
+	if err != nil {
+		return errors.New(err, nil)
+	}
+
+	if i.UserType != nil {
+		if e.UserTypeStats != nil {
+			err := e.UserTypeStats.Update(*i.UserType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+		} else {
+			ets, err := NewSimpleStats(*i.UserType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+			e.UserTypeStats = ets
+		}
+	}
+
+	if i.DeviceType != nil {
+		if e.DeviceTypeStats != nil {
+			err := e.DeviceTypeStats.Update(*i.DeviceType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+		} else {
+			ets, err := NewSimpleStats(*i.DeviceType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+			e.DeviceTypeStats = ets
+		}
+	}
+
+	if i.SessionType != nil {
+		if e.SessionTypeStats != nil {
+			err := e.SessionTypeStats.Update(*i.SessionType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+		} else {
+			ets, err := NewSimpleStats(*i.SessionType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+			e.SessionTypeStats = ets
+		}
+	}
+
+	if i.Properties != nil {
+		for name, value := range i.Properties {
+			err := e.PropertyStats.Update(name, value)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+		}
+	}
+
+	return nil
 }

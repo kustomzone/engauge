@@ -94,7 +94,7 @@ func (c *Client) InitCache() {
 	}
 
 	log.Println("loading origin stats")
-	db.OriginsStatsCache = types.NewOriginStatsList()
+	db.OriginsStatsCache = types.NewIntervalStatsList(types.OriginObjectType)
 	originStatsResult := c.Do(&db.Op{
 		Resource: db.OriginStats,
 		Type:     db.List,
@@ -102,7 +102,7 @@ func (c *Client) InitCache() {
 	if originStatsResult.Error != nil {
 		panic(originStatsResult.Error)
 	}
-	err = db.OriginsStatsCache.Load(originStatsResult.Item.([]*types.OriginStats))
+	err = db.OriginsStatsCache.Load(originStatsResult.Item.([]*types.IntervalStats))
 	if err != nil {
 		panic(err)
 	}
@@ -121,7 +121,7 @@ func (c *Client) InitCache() {
 	}
 
 	log.Println("loading entity stats")
-	db.EntityStatsCache = types.NewEntityStatsList()
+	db.EntityStatsCache = types.NewIntervalStatsList(types.EntityObjectType)
 	entityStatsResult := c.Do(&db.Op{
 		Resource: db.EntityStats,
 		Type:     db.List,
@@ -129,7 +129,7 @@ func (c *Client) InitCache() {
 	if entityStatsResult.Error != nil {
 		panic(entityStatsResult.Error)
 	}
-	err = db.EntityStatsCache.Load(entityStatsResult.Item.([]*types.EntityStats))
+	err = db.EntityStatsCache.Load(entityStatsResult.Item.([]*types.IntervalStats))
 	if err != nil {
 		panic(err)
 	}
@@ -152,7 +152,7 @@ func (c *Client) InitCache() {
 	}
 
 	log.Println("loading endpoint stats")
-	db.EndpointsStatsCache = types.NewEndpointStatsList()
+	db.EndpointsStatsCache = types.NewIntervalStatsList(types.EndpointObjectType)
 	endpointStatsResult := c.Do(&db.Op{
 		Resource: db.EndpointStats,
 		Type:     db.List,
@@ -160,7 +160,7 @@ func (c *Client) InitCache() {
 	if endpointStatsResult.Error != nil {
 		panic(endpointStatsResult.Error)
 	}
-	err = db.EndpointsStatsCache.Load(endpointStatsResult.Item.([]*types.EndpointStats))
+	err = db.EndpointsStatsCache.Load(endpointStatsResult.Item.([]*types.IntervalStats))
 	if err != nil {
 		panic(err)
 	}

@@ -45,16 +45,10 @@ type OriginCounts struct {
 
 // OriginResponse --
 type OriginResponse struct {
-	ID             *UUID        `json:"id"`
-	OriginType     *string      `json:"originType,omitempty"`
-	OriginID       *string      `json:"originID,omitempty"`
-	AllTimeStats   *OriginStats `json:"allTimeStats,omitempty"`
-	HourlyStats    *OriginStats `json:"hourlyStats,omitempty"`
-	DailyStats     *OriginStats `json:"dailyStats,omitempty"`
-	WeeklyStats    *OriginStats `json:"weeklyStats,omitempty"`
-	MonthlyStats   *OriginStats `json:"monthlyStats,omitempty"`
-	QuarterlyStats *OriginStats `json:"quarterlyStats,omitempty"`
-	YearlyStats    *OriginStats `json:"yearlyStats,omitempty"`
+	ID         *UUID             `json:"id"`
+	OriginType *string           `json:"originType,omitempty"`
+	OriginID   *string           `json:"originID,omitempty"`
+	Stats      *AllIntervalStats `json:"stats,omitempty"`
 }
 
 // NewOrigin will create and return a new origin object with a unique id

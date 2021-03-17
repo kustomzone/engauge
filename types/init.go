@@ -40,4 +40,14 @@ func init() {
 
 	// endpoints
 	gob.Register(new(Endpoints))
+	gob.Register(new(EndpointProfile))
+
+	// entities
+	gob.Register(new(Entity))
+	gob.Register(new(EntityProfile))
+
+	// interval stats
+	gob.Register(new(Updater))
+	gob.Register(new(IntervalStats))
+	gob.Register(new(IntervalStatsList))
 }

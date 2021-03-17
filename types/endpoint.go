@@ -25,8 +25,6 @@ type Endpoint struct {
 	// where
 	OriginType *string `json:"originType,omitempty"`
 	OriginID   *string `json:"originID,omitempty"`
-
-	Profile *EndpointProfile `json:"profile"`
 }
 
 // EndpointListView --
@@ -63,13 +61,7 @@ type EndpointResponse struct {
 	OriginType *string `json:"originType,omitempty"`
 	OriginID   *string `json:"originID,omitempty"`
 
-	Profile        *EndpointProfile `json:"profile"`
-	HourlyStats    *EndpointStats   `json:"hourlyStats"`
-	DailyStats     *EndpointStats   `json:"dailyStats"`
-	WeeklyStats    *EndpointStats   `json:"weeklyStats"`
-	MonthlyStats   *EndpointStats   `json:"monthlyStats"`
-	QuarterlyStats *EndpointStats   `json:"quarterlyStats"`
-	YearlyStats    *EndpointStats   `json:"yearlyStats"`
+	Stats *AllIntervalStats `json:"stats,omitempty"`
 }
 
 // Endpoints is a List of endpoint objects
@@ -94,13 +86,14 @@ type EndpointReward struct {
 // EndpointsRewards is a list of EndpointReward objects
 type EndpointsRewards []EndpointReward
 
-// NewEndpointStatsList --
-func NewEndpointStatsList() *EndpointStatsList {
-	return &EndpointStatsList{
-		index:   make(map[uint32]*EndpointStats),
-		updated: make(map[uint32]*EndpointStats),
-		Mutex:   &sync.Mutex{},
-	}
+// EndpointProfile --
+type EndpointProfile struct {
+	Total            int64                 `json:"total"`
+	UserTypeStats    *SimpleStats          `json:"userTypeStats"`
+	DeviceTypeStats  *SimpleStats          `json:"deviceTypeStats"`
+	SessionTypeStats *SimpleStats          `json:"sessionTypeStats"`
+	SessionStats     *SessionStatsList     `json:"sessionStats"` // tracks duration into session, and prior total interaction stats
+	PropertyStats    *NamedSimpleStatsList `json:"propertyStats"`
 }
 
 // ListView --
@@ -136,12 +129,49 @@ func NewEndpointsList() *EndpointsList {
 func NewEndpoint(i *Interaction) (*Endpoint, error) {
 	endpoint := i.Endpoint()
 	endpoint.ID = NewUUID()
-	profile, err := NewEndpointProfile(i)
+
+	return endpoint, nil
+}
+
+// NewEndpointProfile --
+func NewEndpointProfile(i *Interaction) (*EndpointProfile, error) {
+	device := i.Device()
+	user := i.User()
+	session := i.Session()
+
+	userTypeStats, err := NewSimpleStats(user.Type)
 	if err != nil {
 		return nil, errors.New(err, nil)
 	}
-	endpoint.Profile = profile
-	return endpoint, nil
+
+	deviceTypeStats, err := NewSimpleStats(device.Type)
+	if err != nil {
+		return nil, errors.New(err, nil)
+	}
+
+	sessionTypeStats, err := NewSimpleStats(session.Type)
+	if err != nil {
+		return nil, errors.New(err, nil)
+	}
+
+	propertyStats := NewNamedSimpleStatsList()
+	if i.Properties != nil {
+		for name, value := range i.Properties {
+			err := propertyStats.Update(name, value)
+			if err != nil {
+				return nil, errors.New(err, nil)
+			}
+		}
+	}
+
+	return &EndpointProfile{
+		Total:            1,
+		UserTypeStats:    userTypeStats,
+		DeviceTypeStats:  deviceTypeStats,
+		SessionTypeStats: sessionTypeStats,
+		SessionStats:     NewSessionStatsList(),
+		PropertyStats:    propertyStats,
+	}, nil
 }
 
 // Response --
@@ -154,21 +184,21 @@ func (e *Endpoints) Response() []*Endpoint {
 }
 
 // ID --
-func (i *Endpoints) ID(object interface{}) *UUID {
+func (i *Endpoints) ID(object interface{}) uuid.UUID {
 	i.Lock()
 	defer i.Unlock()
 
 	endpoint, ok := object.(*Endpoint)
 	if !ok {
-		return UUIDNil
+		return UUIDNil.UUID
 	}
 
 	id, ok := i.index[endpoint.String()]
 	if !ok {
-		return UUIDNil
+		return UUIDNil.UUID
 	}
 
-	return &UUID{id}
+	return id
 }
 
 // Range --
@@ -189,11 +219,10 @@ func (i *Endpoints) Apply(event *Event) error {
 	defer i.Unlock()
 
 	interaction := event.Interaction
-	s := event.Session
 
 	ep, ok := i.List[event.Endpoint]
 	if ok {
-		err := ep.Apply(interaction, s)
+		err := ep.Apply(event)
 		if err != nil {
 			return errors.New(err, nil)
 		}
@@ -211,17 +240,18 @@ func (i *Endpoints) Apply(event *Event) error {
 	i.index[ne.String()] = ne.ID.UUID
 	i.updated[ne.ID.UUID] = ne
 
+	event.Endpoint = ne.ID.UUID
+
 	return nil
 }
 
 // Apply --
 func (e *EndpointsList) Apply(event *Event) error {
 	interaction := event.Interaction
-	s := event.Session
 
 	for _, ep := range e.List {
 		if ep.ID.UUID == event.Endpoint {
-			err := ep.Apply(interaction, s)
+			err := ep.Apply(event)
 			if err != nil {
 				return errors.New(err, nil)
 			}
@@ -314,20 +344,7 @@ func (i *Endpoints) Get(key interface{}) interface{} {
 }
 
 // Apply --
-func (i *Endpoint) Apply(interaction *Interaction, sess *UserSession) error {
-	if i.Profile == nil {
-		profile, err := NewEndpointProfile(interaction)
-		if err != nil {
-			return errors.New(err, nil)
-		}
-		i.Profile = profile
-		return nil
-	}
-
-	err := i.Profile.Apply(interaction, sess)
-	if err != nil {
-		return errors.New(err, nil)
-	}
+func (i *Endpoint) Apply(event *Event) error {
 	return nil
 }
 
@@ -438,6 +455,74 @@ func (i *Endpoint) Eq(input interface{}) bool {
 	}
 
 	return true
+}
+
+// Apply --
+func (i *EndpointProfile) Update(event *Event) error {
+	interaction := event.Interaction
+	sess := event.Session
+
+	i.Total++
+
+	if interaction.UserType != nil {
+		if i.UserTypeStats != nil {
+			err := i.UserTypeStats.Update(*interaction.UserType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+		} else {
+			ets, err := NewSimpleStats(*interaction.UserType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+			i.UserTypeStats = ets
+		}
+	}
+
+	if interaction.DeviceType != nil {
+		if i.DeviceTypeStats != nil {
+			err := i.DeviceTypeStats.Update(*interaction.DeviceType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+		} else {
+			ets, err := NewSimpleStats(*interaction.DeviceType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+			i.DeviceTypeStats = ets
+		}
+	}
+
+	if interaction.SessionType != nil {
+		if i.SessionTypeStats != nil {
+			err := i.SessionTypeStats.Update(*interaction.SessionType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+		} else {
+			ets, err := NewSimpleStats(*interaction.SessionType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+			i.SessionTypeStats = ets
+		}
+	}
+
+	if interaction.Properties != nil {
+		for name, value := range interaction.Properties {
+			err := i.PropertyStats.Update(name, value)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+		}
+	}
+
+	err := i.SessionStats.Update(sess)
+	if err != nil {
+		return errors.New(err, nil)
+	}
+	return nil
 }
 
 // String --

@@ -68,29 +68,29 @@ export const EndpointShow = (props) => {
                     <TextField label="Origin ID" source="originID" />
                 </Tab>
                 <Tab label="All-Time Stats">
-                    <NumberField label="Total Interactions" source="profile.total" />
-                    <ArrayField label="User Type Statistics" source="profile.userTypeStats.values">
+                    <NumberField label="Total Interactions" source="stats.allTime.stats.total" />
+                    <ArrayField label="User Type Statistics" source="stats.allTime.stats.userTypeStats.values">
                         <Datagrid>
                             <TextField label="User Type" source="value" />
                             <NumberField label="Total Interactions" source="count" />
                             <NumberField label="Percentage of Interactions" source="percentage" />
                         </Datagrid>
                     </ArrayField>
-                    <ArrayField label="Session Type Statistics" source="profile.sessionTypeStats.values">
+                    <ArrayField label="Session Type Statistics" source="stats.allTime.stats.sessionTypeStats.values">
                         <Datagrid>
                             <TextField label="Session Type" source="value" />
                             <NumberField label="Total Interactions" source="count" />
                             <NumberField label="Percentage of Interactions" source="percentage" />
                         </Datagrid>
                     </ArrayField>
-                    <ArrayField label="Device Type Statistics" source="profile.deviceTypeStats.values">
+                    <ArrayField label="Device Type Statistics" source="stats.allTime.stats.deviceTypeStats.values">
                         <Datagrid>
                             <TextField label="Device Type" source="value" />
                             <NumberField label="Total Interactions" source="count" />
                             <NumberField label="Percentage of Interactions" source="percentage" />
                         </Datagrid>
                     </ArrayField>
-                    <ArrayField label="Property Statistics" source="profile.propertyStats.List">
+                    <ArrayField label="Property Statistics" source="stats.allTime.stats.propertyStats.List">
                         <Datagrid>
                             <TextField label="Property" source="name" />
                             <TextField label="Total Interactions" source="stats.total" />
@@ -100,29 +100,29 @@ export const EndpointShow = (props) => {
                     </ArrayField>
                 </Tab>
                 <Tab label="Hourly Stats">
-                    <NumberField label="Total Interactions" source="hourlyStats.profile.total" />
-                    <ArrayField label="User Type Statistics" source="hourlyStats.profile.userTypeStats.values">
+                    <NumberField label="Total Interactions" source="stats.hourly.stats.total" />
+                    <ArrayField label="User Type Statistics" source="stats.hourly.stats.userTypeStats.values">
                         <Datagrid>
                             <TextField label="User Type" source="value" />
                             <NumberField label="Total Interactions" source="count" />
                             <NumberField label="Percentage of Interactions" source="percentage" />
                         </Datagrid>
                     </ArrayField>
-                    <ArrayField label="Session Type Statistics" source="hourlyStats.profile.sessionTypeStats.values">
+                    <ArrayField label="Session Type Statistics" source="stats.hourly.stats.sessionTypeStats.values">
                         <Datagrid>
                             <TextField label="Session Type" source="value" />
                             <NumberField label="Total Interactions" source="count" />
                             <NumberField label="Percentage of Interactions" source="percentage" />
                         </Datagrid>
                     </ArrayField>
-                    <ArrayField label="Device Type Statistics" source="hourlyStats.profile.deviceTypeStats.values">
+                    <ArrayField label="Device Type Statistics" source="stats.hourly.stats.deviceTypeStats.values">
                         <Datagrid>
                             <TextField label="Device Type" source="value" />
                             <NumberField label="Total Interactions" source="count" />
                             <NumberField label="Percentage of Interactions" source="percentage" />
                         </Datagrid>
                     </ArrayField>
-                    <ArrayField label="Property Statistics" source="hourlyStats.profile.propertyStats.List">
+                    <ArrayField label="Property Statistics" source="stats.hourly.stats.propertyStats.List">
                         <Datagrid>
                             <TextField label="Property" source="name" />
                             <TextField label="Total Interactions" source="stats.total" />
@@ -132,29 +132,29 @@ export const EndpointShow = (props) => {
                     </ArrayField>
                 </Tab>
                 <Tab label="Daily Stats">
-                    <NumberField label="Total Interactions" source="dailyStats.profile.total" />
-                    <ArrayField label="User Type Statistics" source="dailyStats.profile.userTypeStats.values">
+                    <NumberField label="Total Interactions" source="stats.daily.stats.total" />
+                    <ArrayField label="User Type Statistics" source="stats.daily.stats.userTypeStats.values">
                         <Datagrid>
                             <TextField label="User Type" source="value" />
                             <NumberField label="Total Interactions" source="count" />
                             <NumberField label="Percentage of Interactions" source="percentage" />
                         </Datagrid>
                     </ArrayField>
-                    <ArrayField label="Session Type Statistics" source="dailyStats.profile.sessionTypeStats.values">
+                    <ArrayField label="Session Type Statistics" source="stats.daily.stats.sessionTypeStats.values">
                         <Datagrid>
                             <TextField label="Session Type" source="value" />
                             <NumberField label="Total Interactions" source="count" />
                             <NumberField label="Percentage of Interactions" source="percentage" />
                         </Datagrid>
                     </ArrayField>
-                    <ArrayField label="Device Type Statistics" source="dailyStats.profile.deviceTypeStats.values">
+                    <ArrayField label="Device Type Statistics" source="stats.daily.stats.deviceTypeStats.values">
                         <Datagrid>
                             <TextField label="Device Type" source="value" />
                             <NumberField label="Total Interactions" source="count" />
                             <NumberField label="Percentage of Interactions" source="percentage" />
                         </Datagrid>
                     </ArrayField>
-                    <ArrayField label="Property Statistics" source="dailyStats.profile.propertyStats.List">
+                    <ArrayField label="Property Statistics" source="stats.daily.stats.propertyStats.List">
                         <Datagrid>
                             <TextField label="Property" source="name" />
                             <TextField label="Total Interactions" source="stats.total" />
@@ -164,29 +164,29 @@ export const EndpointShow = (props) => {
                     </ArrayField>
                 </Tab>
                 <Tab label="Weekly Stats">
-                    <NumberField label="Total Interactions" source="weeklyStats.profile.total" />
-                    <ArrayField label="User Type Statistics" source="weeklyStats.profile.userTypeStats.values">
+                    <NumberField label="Total Interactions" source="stats.weekly.stats.total" />
+                    <ArrayField label="User Type Statistics" source="stats.weekly.stats.userTypeStats.values">
                         <Datagrid>
                             <TextField label="User Type" source="value" />
                             <NumberField label="Total Interactions" source="count" />
                             <NumberField label="Percentage of Interactions" source="percentage" />
                         </Datagrid>
                     </ArrayField>
-                    <ArrayField label="Session Type Statistics" source="weeklyStats.profile.sessionTypeStats.values">
+                    <ArrayField label="Session Type Statistics" source="stats.weekly.stats.sessionTypeStats.values">
                         <Datagrid>
                             <TextField label="Session Type" source="value" />
                             <NumberField label="Total Interactions" source="count" />
                             <NumberField label="Percentage of Interactions" source="percentage" />
                         </Datagrid>
                     </ArrayField>
-                    <ArrayField label="Device Type Statistics" source="weeklyStats.profile.deviceTypeStats.values">
+                    <ArrayField label="Device Type Statistics" source="stats.weekly.stats.deviceTypeStats.values">
                         <Datagrid>
                             <TextField label="Device Type" source="value" />
                             <NumberField label="Total Interactions" source="count" />
                             <NumberField label="Percentage of Interactions" source="percentage" />
                         </Datagrid>
                     </ArrayField>
-                    <ArrayField label="Property Statistics" source="weeklyStats.profile.propertyStats.List">
+                    <ArrayField label="Property Statistics" source="stats.weekly.stats.propertyStats.List">
                         <Datagrid>
                             <TextField label="Property" source="name" />
                             <TextField label="Total Interactions" source="stats.total" />
@@ -196,29 +196,29 @@ export const EndpointShow = (props) => {
                     </ArrayField>
                 </Tab>
                 <Tab label="Monthly Stats">
-                    <NumberField label="Total Interactions" source="monthlyStats.profile.total" />
-                    <ArrayField label="User Type Statistics" source="monthlyStats.profile.userTypeStats.values">
+                    <NumberField label="Total Interactions" source="stats.monthly.stats.total" />
+                    <ArrayField label="User Type Statistics" source="stats.monthly.stats.userTypeStats.values">
                         <Datagrid>
                             <TextField label="User Type" source="value" />
                             <NumberField label="Total Interactions" source="count" />
                             <NumberField label="Percentage of Interactions" source="percentage" />
                         </Datagrid>
                     </ArrayField>
-                    <ArrayField label="Session Type Statistics" source="monthlyStats.profile.sessionTypeStats.values">
+                    <ArrayField label="Session Type Statistics" source="stats.monthly.stats.sessionTypeStats.values">
                         <Datagrid>
                             <TextField label="Session Type" source="value" />
                             <NumberField label="Total Interactions" source="count" />
                             <NumberField label="Percentage of Interactions" source="percentage" />
                         </Datagrid>
                     </ArrayField>
-                    <ArrayField label="Device Type Statistics" source="monthlyStats.profile.deviceTypeStats.values">
+                    <ArrayField label="Device Type Statistics" source="stats.monthly.stats.deviceTypeStats.values">
                         <Datagrid>
                             <TextField label="Device Type" source="value" />
                             <NumberField label="Total Interactions" source="count" />
                             <NumberField label="Percentage of Interactions" source="percentage" />
                         </Datagrid>
                     </ArrayField>
-                    <ArrayField label="Property Statistics" source="monthlyStats.profile.propertyStats.List">
+                    <ArrayField label="Property Statistics" source="stats.monthly.stats.propertyStats.List">
                         <Datagrid>
                             <TextField label="Property" source="name" />
                             <TextField label="Total Interactions" source="stats.total" />
@@ -228,29 +228,29 @@ export const EndpointShow = (props) => {
                     </ArrayField>
                 </Tab>
                 <Tab label="Quarterly Stats">
-                    <NumberField label="Total Interactions" source="quarterlyStats.profile.total" />
-                    <ArrayField label="User Type Statistics" source="quarterlyStats.profile.userTypeStats.values">
+                    <NumberField label="Total Interactions" source="stats.quarterly.stats.total" />
+                    <ArrayField label="User Type Statistics" source="stats.quarterly.stats.userTypeStats.values">
                         <Datagrid>
                             <TextField label="User Type" source="value" />
                             <NumberField label="Total Interactions" source="count" />
                             <NumberField label="Percentage of Interactions" source="percentage" />
                         </Datagrid>
                     </ArrayField>
-                    <ArrayField label="Session Type Statistics" source="quarterlyStats.profile.sessionTypeStats.values">
+                    <ArrayField label="Session Type Statistics" source="stats.quarterly.stats.sessionTypeStats.values">
                         <Datagrid>
                             <TextField label="Session Type" source="value" />
                             <NumberField label="Total Interactions" source="count" />
                             <NumberField label="Percentage of Interactions" source="percentage" />
                         </Datagrid>
                     </ArrayField>
-                    <ArrayField label="Device Type Statistics" source="quarterlyStats.profile.deviceTypeStats.values">
+                    <ArrayField label="Device Type Statistics" source="stats.quarterly.stats.deviceTypeStats.values">
                         <Datagrid>
                             <TextField label="Device Type" source="value" />
                             <NumberField label="Total Interactions" source="count" />
                             <NumberField label="Percentage of Interactions" source="percentage" />
                         </Datagrid>
                     </ArrayField>
-                    <ArrayField label="Property Statistics" source="quarterlyStats.profile.propertyStats.List">
+                    <ArrayField label="Property Statistics" source="stats.quarterly.stats.propertyStats.List">
                         <Datagrid>
                             <TextField label="Property" source="name" />
                             <TextField label="Total Interactions" source="stats.total" />
@@ -260,29 +260,29 @@ export const EndpointShow = (props) => {
                     </ArrayField>
                 </Tab>
                 <Tab label="Yearly Stats">
-                    <NumberField label="Total Interactions" source="yearlyStats.profile.total" />
-                    <ArrayField label="User Type Statistics" source="yearlyStats.profile.userTypeStats.values">
+                    <NumberField label="Total Interactions" source="stats.yearly.stats.total" />
+                    <ArrayField label="User Type Statistics" source="stats.yearly.stats.userTypeStats.values">
                         <Datagrid>
                             <TextField label="User Type" source="value" />
                             <NumberField label="Total Interactions" source="count" />
                             <NumberField label="Percentage of Interactions" source="percentage" />
                         </Datagrid>
                     </ArrayField>
-                    <ArrayField label="Session Type Statistics" source="yearlyStats.profile.sessionTypeStats.values">
+                    <ArrayField label="Session Type Statistics" source="stats.yearly.stats.sessionTypeStats.values">
                         <Datagrid>
                             <TextField label="Session Type" source="value" />
                             <NumberField label="Total Interactions" source="count" />
                             <NumberField label="Percentage of Interactions" source="percentage" />
                         </Datagrid>
                     </ArrayField>
-                    <ArrayField label="Device Type Statistics" source="yearlyStats.profile.deviceTypeStats.values">
+                    <ArrayField label="Device Type Statistics" source="stats.yearly.stats.deviceTypeStats.values">
                         <Datagrid>
                             <TextField label="Device Type" source="value" />
                             <NumberField label="Total Interactions" source="count" />
                             <NumberField label="Percentage of Interactions" source="percentage" />
                         </Datagrid>
                     </ArrayField>
-                    <ArrayField label="Property Statistics" source="yearlyStats.profile.propertyStats.List">
+                    <ArrayField label="Property Statistics" source="stats.yearly.stats.propertyStats.List">
                         <Datagrid>
                             <TextField label="Property" source="name" />
                             <TextField label="Total Interactions" source="stats.total" />
