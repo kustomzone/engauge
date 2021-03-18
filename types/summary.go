@@ -10,7 +10,7 @@ import (
 
 // Summary --
 type Summary struct {
-	SpanType         string
+	Interval         string
 	Start            time.Time
 	End              time.Time
 	Total            int64
@@ -28,7 +28,7 @@ type Summary struct {
 
 // SummaryListView --
 type SummaryListView struct {
-	SpanType string    `json:"id"`
+	Interval string    `json:"id"`
 	Start    time.Time `json:"start"`
 	End      time.Time `json:"end"`
 }
@@ -51,13 +51,13 @@ type SummaryResponse struct {
 }
 
 // NewSummary will generate a new summary for an interval type
-func NewSummary(spanType string, event *Event) (*Summary, error) {
+func NewSummary(interval string, event *Event) (*Summary, error) {
 	i := event.Interaction
 	sess := event.Session
 
 	// span
 	var start, end time.Time
-	switch spanType {
+	switch interval {
 	case Hourly:
 		start = temporal.HourStart(*i.CreatedAt)
 		end = temporal.HourFinish(*i.CreatedAt)
@@ -89,7 +89,7 @@ func NewSummary(spanType string, event *Event) (*Summary, error) {
 		return &Summary{
 			Start:        start,
 			End:          end,
-			SpanType:     spanType,
+			Interval:     interval,
 			Total:        1,
 			UnitMetrics:  unitMetrics,
 			SessionStats: sessionStats,
@@ -175,7 +175,7 @@ func NewSummary(spanType string, event *Event) (*Summary, error) {
 	return &Summary{
 		Start:            start,
 		End:              end,
-		SpanType:         spanType,
+		Interval:         interval,
 		Total:            1,
 		ActionStats:      actionStats,
 		OriginTypeStats:  originTypeStats,
@@ -193,7 +193,7 @@ func NewSummary(spanType string, event *Event) (*Summary, error) {
 // ListView --
 func (s *Summary) ListView() *SummaryListView {
 	return &SummaryListView{
-		SpanType: s.SpanType,
+		Interval: s.Interval,
 		Start:    s.Start,
 		End:      s.End,
 	}
@@ -202,7 +202,7 @@ func (s *Summary) ListView() *SummaryListView {
 // Response --
 func (s *Summary) Response() *SummaryResponse {
 	return &SummaryResponse{
-		ID:               s.SpanType,
+		ID:               s.Interval,
 		Start:            s.Start,
 		End:              s.End,
 		Total:            s.Total,
@@ -220,7 +220,7 @@ func (s *Summary) Response() *SummaryResponse {
 
 // SessionExpirationUpdate --
 func (s *Summary) SessionExpirationUpdate(session *UserSession) error {
-	if s.SpanType == AllTime {
+	if s.Interval == AllTime {
 		return s.SessionStats.SimpleUpdate(session)
 	}
 
@@ -319,7 +319,7 @@ func (s *Summary) Apply(event *Event) error {
 		}
 	}
 
-	if s.SpanType == AllTime {
+	if s.Interval == AllTime {
 		s.UnitMetrics.SimpleUpdate(i)
 		return nil
 	}

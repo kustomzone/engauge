@@ -47,7 +47,7 @@ func (c *Client) InitCache() {
 		panic(summariesResult.Error)
 	}
 	for _, summary := range summariesResult.Item.([]*types.Summary) {
-		db.SummaryCache.Store(summary.SpanType, summary)
+		db.SummaryCache.Store(summary.Interval, summary)
 	}
 
 	log.Println("loading properties")
@@ -174,10 +174,10 @@ func (c *Client) initSessionsCache() {
 			// update summaries
 			db.SummaryCache.Range(func(key, value interface{}) bool {
 				summary := value.(*types.Summary)
-				spanType := summary.SpanType
+				interval := summary.Interval
 
 				var toggle bool
-				switch spanType {
+				switch interval {
 				case types.Hourly:
 					toggle = db.GlobalSettings.StatsToggles.Hourly
 				case types.Daily:
@@ -202,7 +202,7 @@ func (c *Client) initSessionsCache() {
 					Resource: db.Summaries,
 					Type:     db.Update,
 					Where: db.WhereMap{
-						"spanType": spanType,
+						"interval": interval,
 					},
 					Item: summary,
 				})

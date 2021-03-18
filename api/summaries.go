@@ -65,9 +65,9 @@ func SummaryGet(c echo.Context) error {
 	}
 	summary := item.(*types.Summary)
 
-	if time.Now().UTC().After(summary.End) {
+	if time.Now().After(summary.End) {
 		response := &types.SummaryResponse{
-			ID: summary.SpanType,
+			ID: summary.Interval,
 		}
 		return c.JSON(http.StatusOK, response)
 	}

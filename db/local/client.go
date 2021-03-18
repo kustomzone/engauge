@@ -335,7 +335,7 @@ func (c *Client) filename(resource string, item interface{}) string {
 		filename = fmt.Sprintf("%s/%s/%s-%s", c.basepath, resource, i.Name, i.SpanType)
 	case db.Summaries:
 		i := item.(*types.Summary)
-		filename = fmt.Sprintf("%s/%s/%s", c.basepath, resource, i.SpanType)
+		filename = fmt.Sprintf("%s/%s/%s", c.basepath, resource, i.Interval)
 	case db.Settings:
 		filename = fmt.Sprintf("%s/%s", c.basepath, resource)
 	}
