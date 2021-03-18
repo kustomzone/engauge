@@ -420,14 +420,14 @@ func updateDB(client db.Client) {
 	}
 
 	db.SummaryCache.Range(func(key, value interface{}) bool {
-		spanType := key.(string)
+		interval := key.(string)
 		summary := value.(*types.Summary)
 
 		summaryUpdate := client.Do(&db.Op{
 			Resource: db.Summaries,
 			Type:     db.Update,
 			Where: db.WhereMap{
-				"item.spanType": spanType,
+				"item.interval": interval,
 			},
 			Item:   summary,
 			Upsert: true,
