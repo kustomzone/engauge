@@ -2,8 +2,8 @@ package api
 
 import (
 	"github.com/EngaugeAI/engauge/db"
-	"github.com/dgrijalva/jwt-go"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -24,6 +24,8 @@ func AttachHandlers(server *echo.Echo, dev bool) {
 		}))
 	}
 
+	api.POST("/interaction", interactionPost, middleware.BodyLimit("2K"))
+
 	dashboard := server.Group("/dashboard")
 	dashboard.Use(middleware.JWTWithConfig(middleware.JWTConfig{
 		SigningKey:    []byte(db.GlobalSettings.JWTSecret),
@@ -32,8 +34,6 @@ func AttachHandlers(server *echo.Echo, dev bool) {
 		TokenLookup:   "cookie:token",
 		Claims:        jwt.MapClaims{},
 	}))
-
-	api.POST("/interaction", interactionPost, middleware.BodyLimit("2K"))
 
 	// summary
 	dashboard.GET("/summaries", SummaryList)

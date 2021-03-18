@@ -43,8 +43,13 @@ func OriginsList(c echo.Context) error {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 
+	list := originDocs.Item.([]*types.Origin)
+	if len(list) == 0 {
+		list = make([]*types.Origin, 0)
+	}
+
 	c.Response().Header().Add("x-total-count", strconv.Itoa(db.OriginsCache.Len()))
-	return c.JSON(http.StatusOK, originDocs.Item.([]*types.Origin))
+	return c.JSON(http.StatusOK, list)
 }
 
 // OriginGet --

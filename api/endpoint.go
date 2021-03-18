@@ -41,7 +41,7 @@ func EndpointList(c echo.Context) error {
 		Offset:   offset,
 	})
 
-	var listView []*types.EndpointListView
+	listView := make([]*types.EndpointListView, 0)
 	for _, endpoint := range endpointDocs.Item.([]*types.Endpoint) {
 		listView = append(listView, endpoint.ListView())
 	}

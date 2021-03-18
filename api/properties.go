@@ -46,7 +46,7 @@ func PropertiesList(c echo.Context) error {
 
 	items := propertiesResult.Item.([]*types.Property)
 
-	var listView types.PropertyListViews
+	listView := make(types.PropertyListViews, 0)
 	for _, property := range items {
 		listView = append(listView, property.ListView())
 	}
