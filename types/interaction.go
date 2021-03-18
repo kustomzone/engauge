@@ -16,13 +16,13 @@ var (
 
 	/* timezone */
 
-	// DefaultTimeZone is the default timezone for the system (defaults to UTC)
-	DefaultTimeZone = ""
+	// DefaultTimeZone is the default timezone for the system (defaults to local time)
+	DefaultTimeZone = "Local"
 )
 
 // Interaction represents the full structure
 // of an interaction object
-// must be unique on: {Type, UserID, Timestamp}
+// must be unique on: {Action, UserID, Timestamp}
 type Interaction struct {
 	// how
 	Action *string `json:"action,omitempty"`
