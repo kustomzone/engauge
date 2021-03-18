@@ -23,6 +23,18 @@ type Origins struct {
 	*sync.Mutex
 }
 
+// OriginProfile --
+type OriginProfile struct {
+	Total            int64                 `json:"total"`
+	ActionStats      *SimpleStats          `json:"actionStats,omitempty"`
+	EntityTypeStats  *SimpleStats          `json:"entityTypeStats,omitempty"`
+	UserTypeStats    *SimpleStats          `json:"userTypeStats,omitempty"`
+	DeviceTypeStats  *SimpleStats          `json:"deviceTypeStats,omitempty"`
+	SessionTypeStats *SimpleStats          `json:"sessionTypeStats,omitempty"`
+	PropertyStats    *NamedSimpleStatsList `json:"propertyStats,omitempty"`
+	VisitStats       *SessionStatsList     `json:"visitStats,omitempty"`
+}
+
 // OriginsList does not utilize a mutex and can be used for gob serialization
 type OriginsList struct {
 	List []*Origin
@@ -84,6 +96,83 @@ func NewOriginCounts() *OriginCounts {
 	return &OriginCounts{
 		List: make([]*OriginCount, 0),
 	}
+}
+
+// NewOriginProfile --
+func NewOriginProfile(event *Event) (*OriginProfile, error) {
+	i := event.Interaction
+	sess := event.Session
+
+	actionStats, err := NewSimpleStats(*i.Action)
+	if err != nil {
+		return nil, errors.New(err, nil)
+	}
+
+	var entityTypeStats, userTypeStats, deviceTypeStats, sessionTypeStats *SimpleStats
+	if i.EntityType != nil {
+		ets, err := NewSimpleStats(*i.EntityType)
+		if err != nil {
+			return nil, errors.New(err, nil)
+		}
+		entityTypeStats = ets
+	}
+
+	if i.UserType != nil {
+		uts, err := NewSimpleStats(*i.UserType)
+		if err != nil {
+			return nil, errors.New(err, nil)
+		}
+		userTypeStats = uts
+	}
+
+	if i.DeviceType != nil {
+		dts, err := NewSimpleStats(*i.DeviceType)
+		if err != nil {
+			return nil, errors.New(err, nil)
+		}
+		deviceTypeStats = dts
+	}
+
+	if i.SessionType != nil {
+		sts, err := NewSimpleStats(*i.SessionType)
+		if err != nil {
+			return nil, errors.New(err, nil)
+		}
+		sessionTypeStats = sts
+	}
+
+	propertyStats := NewNamedSimpleStatsList()
+	if i.Properties != nil {
+		for key, value := range i.Properties {
+			err := propertyStats.Update(key, value)
+			if err != nil {
+				return nil, errors.New(err, nil)
+			}
+		}
+	}
+
+	endpointProfiles := NewEndpointsList()
+	err = endpointProfiles.Apply(event)
+	if err != nil {
+		return nil, errors.New(err, nil)
+	}
+
+	visitStats := NewSessionStatsList()
+	err = visitStats.Update(sess)
+	if err != nil {
+		return nil, errors.New(err, nil)
+	}
+
+	return &OriginProfile{
+		Total:            1,
+		ActionStats:      actionStats,
+		EntityTypeStats:  entityTypeStats,
+		UserTypeStats:    userTypeStats,
+		DeviceTypeStats:  deviceTypeStats,
+		SessionTypeStats: sessionTypeStats,
+		PropertyStats:    propertyStats,
+		VisitStats:       visitStats,
+	}, nil
 }
 
 // Len --
@@ -300,4 +389,93 @@ func (o *OriginsList) qualifies(id uuid.UUID) bool {
 	}
 
 	return false
+}
+
+// Update --
+func (o *OriginProfile) Update(event *Event) error {
+	o.Total++
+
+	i := event.Interaction
+	s := event.Session
+
+	err := o.ActionStats.Update(*i.Action)
+	if err != nil {
+		return errors.New(err, nil)
+	}
+
+	if i.EntityType != nil {
+		if o.EntityTypeStats != nil {
+			err := o.EntityTypeStats.Update(*i.EntityType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+		} else {
+			ets, err := NewSimpleStats(*i.EntityType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+			o.EntityTypeStats = ets
+		}
+	}
+
+	if i.UserType != nil {
+		if o.UserTypeStats != nil {
+			err := o.UserTypeStats.Update(*i.UserType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+		} else {
+			ets, err := NewSimpleStats(*i.UserType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+			o.UserTypeStats = ets
+		}
+	}
+
+	if i.DeviceType != nil {
+		if o.DeviceTypeStats != nil {
+			err := o.DeviceTypeStats.Update(*i.DeviceType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+		} else {
+			ets, err := NewSimpleStats(*i.DeviceType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+			o.DeviceTypeStats = ets
+		}
+	}
+
+	if i.SessionType != nil {
+		if o.SessionTypeStats != nil {
+			err := o.SessionTypeStats.Update(*i.SessionType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+		} else {
+			ets, err := NewSimpleStats(*i.SessionType)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+			o.SessionTypeStats = ets
+		}
+	}
+
+	if i.Properties != nil {
+		for name, value := range i.Properties {
+			err := o.PropertyStats.Update(name, value)
+			if err != nil {
+				return errors.New(err, nil)
+			}
+		}
+	}
+
+	err = o.VisitStats.Update(s)
+	if err != nil {
+		return errors.New(err, nil)
+	}
+
+	return nil
 }
