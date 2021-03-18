@@ -51,14 +51,10 @@ func main() {
 
 	if env.Timezone != "" {
 		types.DefaultTimeZone = env.Timezone
-	} else {
-		types.DefaultTimeZone = "Local"
 	}
 
 	if env.Sessiondelay != 0 {
 		types.SessionExpiryDuration = time.Duration(time.Duration(int64(env.Sessiondelay)) * time.Minute)
-	} else {
-		types.SessionExpiryDuration = time.Duration(time.Duration(int64(60)) * time.Minute)
 	}
 
 	db.GlobalSettings.User = env.User
