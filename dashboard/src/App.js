@@ -11,7 +11,7 @@ import { createMuiTheme } from '@material-ui/core/styles';
 import authProvider from './authProvider';
 
 import { EndpointList, EndpointCreate, EndpointShow } from './endpoint';
-import { PropertyList, PropertyCreate, PropertyShow } from './property';
+import { PropertyList, PropertyShow } from './property';
 import { OriginList, OriginShow } from './origin';
 import { EntityList, EntityShow } from './entity';
 import { SummaryList, SummaryShow } from "./summary";

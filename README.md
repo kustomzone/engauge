@@ -8,11 +8,10 @@ Track user interactions in your apps and products in real-time and see the corre
 
 Allows for custom instrumentation of applications/products by utilizing a simple and consistent data format.
 
-<!-- Interactions format -->
 ```go
 type Interaction struct {
-    // how
-	Action *string // required
+	// how
+	Action *string
 
 	// what
 	EntityType *string
@@ -22,22 +21,28 @@ type Interaction struct {
 	OriginType *string
 	OriginID   *string
 
-    // who
+	// who
 	UserType *string
-	UserID   *string // required
+	UserID   *string
 
 	DeviceType *string
 	DeviceID   *string
+
+	// why
+	SessionType *string
+	SessionID   *string
 
 	// when
 	Timestamp  *string
 
 	// metadata
-	Properties map[string]interface{}
+	Properties map[string]interface{} `json:"properties,omitempty"`
 }
 ```
 
 The *only required fields* are `action` and `userID`. All other fields are optional to be sent in an interaction.
+
+A basic example can be found a little further down in this README.
 
 ## Features
 
@@ -48,6 +53,8 @@ The *only required fields* are `action` and `userID`. All other fields are optio
   - Daily
   - Weekly
   - Monthly
+  - Quarterly
+  - Yearly
 - Unit Metrics
 
 ## build from source
@@ -95,6 +102,8 @@ It also comes with a health-check endpoint `/health` that will return a simple `
   - `conversion`s will be counted towards conversion counts, and will be searched for an `amount` property key for unit metric analytics
 - Property Keys:
   - `amount` key, expected to be a numerical value
+
+**Please note:** that all property values must be either: a string (text), a number, a number array, or a string array.
 
 ## Sending Interactions
 
@@ -177,7 +186,7 @@ where you will need to replace `example.com` with your Engauge instance domain.
 
 Many more features for Engauge are currently in progress and/or in planning.
 
-Stay tuned!
+Stay Tuned!
 
 ## Open-source, not open-contribution
 
