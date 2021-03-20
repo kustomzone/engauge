@@ -4,6 +4,8 @@
 
 ## Concept
 
+It's not pretty but it's functional.
+
 Track user interactions in your apps and products in real-time and see the corresponding stats in a simple dashboard.
 
 Allows for custom instrumentation of applications/products by utilizing a simple and consistent data format.
