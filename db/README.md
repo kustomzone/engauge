@@ -1,9 +1,8 @@
 # `db` package
 
-## Current Databases Supported
+## Current Backend DBs Supported
 
-- MongoDB
+- LocaLFS
 
-## Contributions
+[Engauge Enterprise](https://engauge.ai) will support further db backends
 
-Please contribute more implementations for other databases if you would like.
